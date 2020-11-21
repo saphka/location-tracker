@@ -1,0 +1,321 @@
+openapi: '3.0.0'
+info:
+  version: 1.0.0
+  title: Location Tracker API
+paths:
+  /groups:
+    get:
+      tags:
+        - Groups
+      description: Get a list of groups user is part of
+      responses:
+        200:
+          description: A list of groups
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Group'
+    post:
+      tags:
+        - Groups
+      description: Create a new group
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GroupChange'
+      responses:
+        201:
+          description: Created group
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Group'
+  /groups/{groupId}:
+    parameters:
+      - name: groupId
+        description: Group id
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      tags:
+        - Groups
+      description: Get a group by id
+      responses:
+        200:
+          description: Group data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Group'
+        404:
+          $ref: '#/components/responses/GroupNotFound'
+    patch:
+      tags:
+        - Groups
+      description: Update group data
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GroupChange'
+      responses:
+        202:
+          description: Group updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Group'
+        404:
+          $ref: '#/components/responses/GroupNotFound'
+    delete:
+      tags:
+        - Groups
+      description: Delete group
+      responses:
+        204:
+          description: Group deleted
+        404:
+          $ref: '#/components/responses/GroupNotFound'
+  /groups/{groupId}/users:
+    parameters:
+      - name: groupId
+        description: Group id
+        in: path
+        required: true
+        schema:
+          type: string
+    post:
+      tags:
+        - Groups
+        - Users
+      description: Add user to group
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user:
+                  type: string
+                  description: User alias
+      responses:
+        201:
+          description: User added
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Group'
+        404:
+          $ref: '#/components/responses/GroupNotFound'
+  /groups/{groupId}/users/{userId}:
+    parameters:
+      - name: groupId
+        description: Group id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: userId
+        description: User id
+        in: path
+        required: true
+        schema:
+          type: string
+    delete:
+      tags:
+        - Groups
+        - Users
+      description: Remove a user from group
+      responses:
+        204:
+          description: User deleted
+        404:
+          $ref: '#/components/responses/GroupOrUserNotFound'
+  /user:
+    get:
+      tags:
+        - Users
+      description: Get your info
+      responses:
+        200:
+          description: User info
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+  /locations:
+    post:
+      tags:
+        - Locations
+      description: Add locations to history
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/Location'
+      responses:
+        201:
+          description: Locations added
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Location'
+    get:
+      tags:
+        - Locations
+      description: Get locations
+      parameters:
+        - name: group-id
+          description: Group id
+          required: true
+          in: query
+          schema:
+            type: integer
+            format: int32
+        - name: timestamp
+          description: A timestamp to filter locations. Only location after that timestamp are returned
+          required: false
+          in: query
+          schema:
+            type: string
+            format: date-time
+      responses:
+        200:
+          description: A list of locations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Location'
+components:
+  schemas:
+    Group:
+      description: A group of users that share location
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+          description: Group id
+        name:
+          type: string
+          description: A group name
+          maxLength: 256
+        users:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+        keys:
+          type: array
+          items:
+            type: object
+            properties:
+              userPublicKey:
+                type: string
+                description: User public key
+              encryptionKey:
+                type: string
+                description: Group key encrypted with user public key
+    GroupChange:
+      description: Group change
+      type: object
+      properties:
+        name:
+          type: string
+          required: true
+          description: Group name
+    User:
+      description: User
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+          description: User id
+        alias:
+          type: string
+          minLength: 1
+          maxLength: 512
+          description: User alias
+        publicKey:
+          type: string
+          description: User public key
+    Location:
+      description: Location
+      type: object
+      properties:
+        groupId:
+          type: integer
+          format: int32
+          description: Group id
+        userId:
+          type: integer
+          format: int32
+          description: User id
+          readOnly: true
+        timestamp:
+          type: string
+          format: date-time
+          description: Location timestamp
+        latitude:
+          type: string
+          format: byte
+          description: Encoded location latitude
+        longitude:
+          type: string
+          format: byte
+          description: Encoded location longitude
+    Error:
+      description: Error
+      type: object
+      properties:
+        code:
+          type: string
+          description: Error code
+          maxLength: 128
+        message:
+          type: string
+          description: Error message
+  responses:
+    GroupNotFound:
+      description: Group not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            0:
+              $ref: '#/components/examples/GroupNotFound'
+    GroupOrUserNotFound:
+      description: Group or user not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            0:
+              $ref: '#/components/examples/GroupNotFound'
+            1:
+              $ref: '#/components/examples/UserotFound'
+  examples:
+    GroupNotFound:
+      description: Group not found
+      value:
+        code: GROUP_NOT_FOUND
+        message: 'Group with id {id} not found'
+    UserotFound:
+      description: User not found
+      value:
+        code: USER_NOT_FOUND
+        message: 'User with id {id} not found in group {id}'

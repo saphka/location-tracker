@@ -1,6 +1,8 @@
-const express   = require('express');
-const app       = express();
-const port      = 3000;
+const express = require('express');
+const app = express();
+const port = process.env.PORT || 3000;
+
+require('dotenv').config();
 
 app.use(express.static(`${__dirname}/client`)); 		// statics
 require(`./server/routes.js`)(app);						// routes

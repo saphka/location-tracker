@@ -1,9 +1,7 @@
-module.exports = app => {
-
-    app.get('/', (req, res) => {
+export default app => {
+    app.get('/user', (req, res) => {
         res.json({
             data: 'Hello, world!'
         })
     });
-
 };

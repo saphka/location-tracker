@@ -1,3 +1,3 @@
 const { Pool } = require('pg')
 
-export default new Pool();
+module.exports = new Pool();

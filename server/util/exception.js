@@ -5,4 +5,4 @@ class Exception {
     }
 }
 
-export default Exception;
+module.exports = Exception;

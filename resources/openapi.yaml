@@ -2,6 +2,8 @@ openapi: '3.0.0'
 info:
   version: 1.0.0
   title: Location Tracker API
+servers:
+  - url: http://localhost:3000/
 paths:
   /groups:
     get:
@@ -136,7 +138,7 @@ paths:
           description: User deleted
         404:
           $ref: '#/components/responses/GroupOrUserNotFound'
-  /user:
+  /users/me:
     get:
       tags:
         - Users
@@ -144,6 +146,44 @@ paths:
       responses:
         200:
           description: User info
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+  /users/auth:
+    post:
+      tags:
+        - Users
+      description: Authenticate
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserAuth'
+      responses:
+        202:
+          description: Authenticated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: Token
+  /users/register:
+    post:
+      tags:
+        - Users
+      description: Register new user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCreate'
+      responses:
+        201:
+          description: New user created
           content:
             application/json:
               schema:
@@ -251,6 +291,33 @@ components:
         publicKey:
           type: string
           description: User public key
+    UserCreate:
+      description: User create data
+      type: object
+      properties:
+        alias:
+          type: string
+          minLength: 1
+          maxLength: 512
+          description: User alias
+        publicKey:
+          type: string
+          description: User public key
+        password:
+          type: string
+          description: User password
+    UserAuth:
+      description: User auth data
+      type: object
+      properties:
+        alias:
+          type: string
+          minLength: 1
+          maxLength: 512
+          description: User alias
+        password:
+          type: string
+          description: User password
     Location:
       description: Location
       type: object

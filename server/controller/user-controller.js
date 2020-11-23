@@ -26,4 +26,12 @@ userController.get('/me', (req, res, next) => {
         .catch(err => next(err))
 });
 
+userController.patch('/me', (req, res, next) => {
+    const {alias, publicKey} = req.body;
+    userService
+        .updateUserById(req.user.sub, alias, publicKey)
+        .then(user => res.status(200).json(user))
+        .catch(err => next(err))
+})
+
 module.exports = userController;

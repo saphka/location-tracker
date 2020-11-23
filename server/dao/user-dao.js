@@ -33,6 +33,30 @@ class UserDao {
             ])
             .then(res => rowMapper(res.rows[0]));
     }
+
+    async updateUserById(id, alias, publicKey) {
+        const client = await database.connect();
+
+        try {
+            await client.query('BEGIN');
+            if (publicKey !== undefined) {
+                await client.query('DELETE FROM location_tracker.user_group_links WHERE user_id = $1', [id]);
+                await client.query('UPDATE location_tracker.users SET public_key = $1 WHERE id = $2', [publicKey, id]);
+            }
+
+            if (publicKey !== undefined) {
+                await client.query('UPDATE location_tracker.users SET user_alias = $1 WHERE id = $2', [alias, id]);
+            }
+
+            await client.query('COMMIT');
+            return await this.getUserById(id);
+        } catch (e) {
+            await client.query('ROLLBACK')
+            throw e
+        } finally {
+            client.release();
+        }
+    }
 }
 
 module.exports = new UserDao();

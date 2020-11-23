@@ -40,6 +40,18 @@ class UserService {
         return await userDao.getUserById(id);
     }
 
+    async updateUserById(id, alias, publicKey) {
+        const user = await this.getUserById(id);
+        if (!user) {
+            throw new Exception(
+                errorCodes.USER_NOT_FOUND,
+                `User with id ${id} not found`
+            )
+        }
+
+        return await userDao.updateUserById(id, alias, publicKey);
+    }
+
 }
 
 module.exports = new UserService();

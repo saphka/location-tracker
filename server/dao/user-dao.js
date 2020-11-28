@@ -1,4 +1,4 @@
-const database = require('./database');
+const {database, runInTransaction} = require('./database');
 
 const rowMapper = row => {
     return {
@@ -35,27 +35,17 @@ class UserDao {
     }
 
     async updateUserById(id, alias, publicKey) {
-        const client = await database.connect();
-
-        try {
-            await client.query('BEGIN');
+        return await runInTransaction(async (client) => {
             if (publicKey !== undefined) {
                 await client.query('DELETE FROM location_tracker.user_group_links WHERE user_id = $1', [id]);
                 await client.query('UPDATE location_tracker.users SET public_key = $1 WHERE id = $2', [publicKey, id]);
             }
 
-            if (publicKey !== undefined) {
+            if (alias !== undefined) {
                 await client.query('UPDATE location_tracker.users SET user_alias = $1 WHERE id = $2', [alias, id]);
             }
-
-            await client.query('COMMIT');
             return await this.getUserById(id);
-        } catch (e) {
-            await client.query('ROLLBACK')
-            throw e
-        } finally {
-            client.release();
-        }
+        });
     }
 }
 

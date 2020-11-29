@@ -4,6 +4,7 @@ const {errorHandler} = require("./server/util/error-handler");
 const bodyParser = require('body-parser');
 
 const userController = require('./server/controller/user-controller');
+const groupController = require('./server/controller/group-controller');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -18,6 +19,7 @@ app.use(bodyParser.json());
 app.use(jwt());
 
 app.use('/users', userController);
+app.use('/groups', groupController);
 
 app.use(errorHandler);
 

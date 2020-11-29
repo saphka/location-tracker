@@ -20,6 +20,8 @@ function errorHandler(err, req, res, next) {
             });
     }
 
+    console.error(err);
+
     return res.status(codeStatusMap[err.code] || 500).json({
         code: err.code || 'INTERNAL_SERVER_ERROR',
         message: err.message

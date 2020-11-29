@@ -414,13 +414,10 @@ components:
           minLength: 1
           maxLength: 512
           description: User alias
-        publicKey:
-          type: string
-          description: User public key
         userPublicKey:
           type: string
           description: User public key
-        locationKey:
+        locationsKey:
           type: string
           description: Group key encrypted with user public key
         placesKey:

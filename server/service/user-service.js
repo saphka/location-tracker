@@ -4,11 +4,17 @@ const Exception = require('../util/exception');
 const jwt = require('jsonwebtoken');
 const {errorCodes} = require('../util/error-handler');
 
+const userMapper = user => {
+    const {password, ...restOfUser} = user;
+
+    return restOfUser;
+}
+
 class UserService {
 
     async register(alias, publicKey, password) {
         const passwordHash = bcrypt.hashSync(password, 10);
-        return await userDao.createUser(alias, publicKey, passwordHash);
+        return await userDao.createUser(alias, publicKey, passwordHash).then(user => userMapper(user));
     }
 
     async authenticate(alias, password) {
@@ -37,7 +43,11 @@ class UserService {
     }
 
     async getUserById(id) {
-        return await userDao.getUserById(id);
+        return await userDao.getUserByIds([id]).then(rows => userMapper(rows[0]));
+    }
+
+    async getUserByIds(ids) {
+        return await userDao.getUserByIds(ids).then(rows => rows.map(userMapper));
     }
 
     async updateUserById(id, alias, publicKey) {
@@ -49,7 +59,7 @@ class UserService {
             )
         }
 
-        return await userDao.updateUserById(id, alias, publicKey);
+        return await userDao.updateUserById(id, alias, publicKey).then(user => userMapper(user));
     }
 
 }

@@ -32,7 +32,7 @@ create table user_group_links
 		constraint user_group_link_groups_id_fk
 			references groups
 				on update cascade on delete cascade,
-	location_key varchar(2048) not null,
+	locations_key varchar(2048) not null,
 	places_key varchar(2048) not null
 );
 

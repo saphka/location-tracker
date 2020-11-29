@@ -12,16 +12,20 @@ const rowMapper = row => {
 class UserDao {
     getUsers(aliases) {
         return database
-            .query('SELECT id, user_alias, public_key, password_hash FROM location_tracker.users WHERE user_alias IN (' +
-                aliases.map((alias, idx) => `$${idx + 1}`).join(',') +
+            .query('SELECT id, user_alias, public_key, password_hash FROM location_tracker.users' +
+                ' WHERE user_alias IN (' +
+                aliases.map((_, idx) => `$${idx + 1}`).join(',') +
                 ')', aliases)
             .then(res => res.rows.map(rowMapper));
     }
 
-    getUserById(id) {
+    getUserByIds(ids) {
         return database
-            .query('SELECT id, user_alias, public_key, password_hash FROM location_tracker.users WHERE id = $1', [id])
-            .then(res => rowMapper(res.rows[0]));
+            .query('SELECT id, user_alias, public_key, password_hash FROM location_tracker.users ' +
+                'WHERE id IN (' +
+                ids.map((_, idx) => `$${idx + 1}`).join(',') +
+                ')', ids)
+            .then(res => res.rows.map(rowMapper));
     }
 
     createUser(alias, publicKey, password) {
@@ -44,7 +48,7 @@ class UserDao {
             if (alias !== undefined) {
                 await client.query('UPDATE location_tracker.users SET user_alias = $1 WHERE id = $2', [alias, id]);
             }
-            return await this.getUserById(id);
+            return await this.getUserByIds([id]).then(rows => rows[0]);
         });
     }
 }

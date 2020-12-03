@@ -15,26 +15,26 @@ groupController.get('/:groupId', (req, res, next) => {
     const userId = req.user.sub;
     let {groupId} = req.params;
     groupService
-        .getGroupsByUserAndId(userId, groupId)
+        .getGroupsByIdAndUser(groupId, userId)
         .then(group => res.status(200).json(group))
         .catch(err => next(err))
 });
 
 groupController.post('/', (req, res, next) => {
-    const {name} = req.body;
+    const {name, color} = req.body;
     const userId = req.user.sub;
     groupService
-        .createGroup(name, userId)
+        .createGroup(name, color, userId)
         .then(group => res.status(201).json(group))
         .catch(err => next(err))
 });
 
 groupController.patch('/:groupId', (req, res, next) => {
-    const {name} = req.body;
+    const {name, color} = req.body;
     const userId = req.user.sub;
     let {groupId} = req.params;
     groupService
-        .updateGroupById(groupId, userId, name)
+        .updateGroupById(groupId, name, color, userId)
         .then(group => res.status(202).json(group))
         .catch(err => next(err))
 });

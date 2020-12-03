@@ -9,7 +9,7 @@ paths:
     get:
       tags:
         - Groups
-      description: Get a list of groups user is part of
+      description: Get a list of groups user owns
       responses:
         200:
           description: A list of groups
@@ -84,79 +84,6 @@ paths:
           description: Group deleted
         404:
           $ref: '#/components/responses/GroupNotFound'
-  /groups/{groupId}/places:
-    parameters:
-      - name: groupId
-        description: Group id
-        in: path
-        required: true
-        schema:
-          type: integer
-          format: int32
-    post:
-      tags:
-        - Groups
-        - Places
-      description: Add place to group
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PlaceChange'
-      responses:
-        201:
-          description: Place added
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Group'
-        404:
-          $ref: '#/components/responses/GroupNotFound'
-  /groups/{groupId}/places/{placeId}:
-    parameters:
-      - name: groupId
-        description: Group id
-        in: path
-        required: true
-        schema:
-          type: integer
-          format: int32
-      - name: placeId
-        description: Place id
-        in: path
-        required: true
-        schema:
-          type: integer
-          format: int32
-    delete:
-      tags:
-        - Groups
-        - Places
-      description: Remove a places from group
-      responses:
-        204:
-          description: Places deleted
-        404:
-          $ref: '#/components/responses/GroupOrPlaceNotFound'
-    patch:
-      tags:
-        - Groups
-        - Places
-      description: Update a places in a group
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PlaceChange'
-      responses:
-        202:
-          description: Place updated
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Group'
-        404:
-          $ref: '#/components/responses/GroupOrPlaceNotFound'
   /groups/{groupId}/users:
     parameters:
       - name: groupId
@@ -169,7 +96,6 @@ paths:
     post:
       tags:
         - Groups
-        - Users
       description: Add user to group
       requestBody:
         content:
@@ -178,8 +104,9 @@ paths:
               type: object
               properties:
                 user:
-                  type: string
-                  description: User alias
+                  type: integer
+                  format: int32
+                  description: User id
       responses:
         201:
           description: User added
@@ -208,13 +135,95 @@ paths:
     delete:
       tags:
         - Groups
-        - Users
       description: Remove a user from group
       responses:
-        204:
+        202:
           description: User deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Group'
         404:
           $ref: '#/components/responses/GroupOrUserNotFound'
+  /places:
+    get:
+      tags:
+        - Places
+      description: Get a list of places user owns
+      responses:
+        200:
+          description: A list of places
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Place'
+    post:
+      tags:
+        - Places
+      description: Add place
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PlaceChange'
+      responses:
+        201:
+          description: Place added
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Place'
+  /places/{placeId}:
+    parameters:
+      - name: placeId
+        description: Place id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+    get:
+      tags:
+        - Places
+      description: Get a place by id
+      responses:
+        200:
+          description: Place info
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Place'
+        404:
+          $ref: '#/components/responses/PlaceNotFound'
+    delete:
+      tags:
+        - Places
+      description: Remove a places
+      responses:
+        204:
+          description: Places deleted
+        404:
+          $ref: '#/components/responses/PlaceNotFound'
+    patch:
+      tags:
+        - Places
+      description: Update a place
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PlaceChange'
+      responses:
+        202:
+          description: Place updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Place'
+        404:
+          $ref: '#/components/responses/PlaceNotFound'
   /users/me:
     get:
       tags:
@@ -230,7 +239,7 @@ paths:
     patch:
       tags:
         - Users
-      description: Update your info. If yuo change your public key, you will be removed from all groups
+      description: Update your info. If yuo change your public key, all your places and received locations will be removed
       requestBody:
         content:
           application/json:
@@ -317,9 +326,9 @@ paths:
         - Locations
       description: Get locations
       parameters:
-        - name: group-id
-          description: Group id
-          required: true
+        - name: sender-id
+          description: Sender id
+          required: false
           in: query
           schema:
             type: integer
@@ -354,14 +363,17 @@ components:
           type: string
           format: byte
           description: Encrypted group name
+        color:
+          type: string
+          maxLength: 6
+          minLength: 6
+          description: Group color code
         users:
           type: array
           items:
-            $ref: '#/components/schemas/UserGroupInfo'
-        places:
-          type: array
-          items:
-            $ref: '#/components/schemas/Place'
+            description: User id
+            type: integer
+            format: int32
     GroupChange:
       description: Group change
       type: object
@@ -370,6 +382,11 @@ components:
           type: string
           required: true
           description: Group name
+        color:
+          type: string
+          maxLength: 6
+          minLength: 6
+          description: Group color code
     User:
       description: User
       type: object
@@ -401,28 +418,6 @@ components:
         password:
           type: string
           description: User password
-    UserGroupInfo:
-      description: User group info
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int32
-          description: User id
-        alias:
-          type: string
-          minLength: 1
-          maxLength: 512
-          description: User alias
-        userPublicKey:
-          type: string
-          description: User public key
-        locationsKey:
-          type: string
-          description: Group key encrypted with user public key
-        placesKey:
-          type: string
-          description: Group places key encrypted with user public key
     Place:
       description: Place
       type: object
@@ -475,15 +470,16 @@ components:
       description: Location
       type: object
       properties:
-        groupId:
+        senderId:
           type: integer
           format: int32
-          description: Group id
-        userId:
-          type: integer
-          format: int32
-          description: User id
+          description: Sender id
           readOnly: true
+        receiverId:
+          type: integer
+          format: int32
+          description: Receiver id
+          writeOnly: true
         timestamp:
           type: string
           format: date-time
@@ -528,16 +524,14 @@ components:
               $ref: '#/components/examples/GroupNotFound'
             1:
               $ref: '#/components/examples/UserNotFound'
-    GroupOrPlaceNotFound:
-      description: Group or place not found
+    PlaceNotFound:
+      description: Place not found
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
           examples:
             0:
-              $ref: '#/components/examples/GroupNotFound'
-            1:
               $ref: '#/components/examples/PlaceNotFound'
   examples:
     GroupNotFound:

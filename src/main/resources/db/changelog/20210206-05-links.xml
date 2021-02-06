@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.2.xsd">
+
+    <changeSet id="20210206-05-links" author="saphka">
+        <createTable tableName="user_group_links">
+            <column name="id" type="int" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="member_id" type="int">
+                <constraints nullable="false" referencedTableName="users" referencedColumnNames="id" deleteCascade="true" foreignKeyName="member_id_fk_users"/>
+            </column>
+            <column name="group_id" type="int">
+                <constraints nullable="false" referencedTableName="groups" referencedColumnNames="id" deleteCascade="true" foreignKeyName="group_id_fk_users"/>
+            </column>
+        </createTable>
+        <createIndex tableName="user_group_links" indexName="user_group_links_group_id_index">
+            <column name="group_id"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

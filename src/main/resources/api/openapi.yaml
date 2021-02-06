@@ -361,7 +361,6 @@ components:
           description: Group id
         name:
           type: string
-          format: byte
           description: Encrypted group name
         color:
           type: string
@@ -429,15 +428,12 @@ components:
           description: Place id
         description:
           type: string
-          format: byte
           description: Place description
         latitude:
           type: string
-          format: byte
           description: Encoded location latitude
         longitude:
           type: string
-          format: byte
           description: Encoded location longitude
     PlaceChange:
       description: Place
@@ -445,15 +441,12 @@ components:
       properties:
         description:
           type: string
-          format: byte
           description: Place description
         latitude:
           type: string
-          format: byte
           description: Encoded location latitude
         longitude:
           type: string
-          format: byte
           description: Encoded location longitude
     UserAuth:
       description: User auth data
@@ -487,11 +480,9 @@ components:
           description: Location timestamp
         latitude:
           type: string
-          format: byte
           description: Encoded location latitude
         longitude:
           type: string
-          format: byte
           description: Encoded location longitude
     Error:
       description: Error

@@ -19,10 +19,10 @@
                 <constraints nullable="false"/>
             </column>
             <column name="sender_id" type="int">
-                <constraints nullable="false" referencedTableName="users" referencedColumnNames="id" deleteCascade="true" foreignKeyName="sender_id_fk_users"/>
+                <constraints nullable="false" referencedTableName="users" referencedColumnNames="id" deleteCascade="true" foreignKeyName="locations_sender_id_fk_users"/>
             </column>
             <column name="receiver_id" type="int">
-                <constraints nullable="false" referencedTableName="users" referencedColumnNames="id" deleteCascade="true" foreignKeyName="receiver_id_fk_users"/>
+                <constraints nullable="false" referencedTableName="users" referencedColumnNames="id" deleteCascade="true" foreignKeyName="locations_receiver_id_fk_users"/>
             </column>
         </createTable>
         <createIndex tableName="locations" indexName="locations_receiver_id_location_timestamp_index">

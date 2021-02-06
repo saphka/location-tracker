@@ -1,4 +1,4 @@
-openapi: '3.0.0'
+openapi: '3.0.3'
 info:
   version: 1.0.0
   title: Location Tracker API
@@ -377,10 +377,11 @@ components:
     GroupChange:
       description: Group change
       type: object
+      required:
+        - name
       properties:
         name:
           type: string
-          required: true
           description: Group name
         color:
           type: string

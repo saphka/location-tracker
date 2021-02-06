@@ -10,10 +10,10 @@
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="member_id" type="int">
-                <constraints nullable="false" referencedTableName="users" referencedColumnNames="id" deleteCascade="true" foreignKeyName="member_id_fk_users"/>
+                <constraints nullable="false" referencedTableName="users" referencedColumnNames="id" deleteCascade="true" foreignKeyName="user_group_links_member_id_fk_users"/>
             </column>
             <column name="group_id" type="int">
-                <constraints nullable="false" referencedTableName="groups" referencedColumnNames="id" deleteCascade="true" foreignKeyName="group_id_fk_users"/>
+                <constraints nullable="false" referencedTableName="groups" referencedColumnNames="id" deleteCascade="true" foreignKeyName="user_group_links_group_id_fk_users"/>
             </column>
         </createTable>
         <createIndex tableName="user_group_links" indexName="user_group_links_group_id_index">

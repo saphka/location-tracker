@@ -16,7 +16,7 @@
                 <constraints nullable="false"/>
             </column>
             <column name="owner_id" type="int">
-                <constraints nullable="false" referencedTableName="users" referencedColumnNames="id" deleteCascade="true" foreignKeyName="owner_id_fk_users"/>
+                <constraints nullable="false" referencedTableName="users" referencedColumnNames="id" deleteCascade="true" foreignKeyName="groups_owner_id_fk_users"/>
             </column>
         </createTable>
         <createIndex tableName="groups" indexName="groups_owner_id_index">

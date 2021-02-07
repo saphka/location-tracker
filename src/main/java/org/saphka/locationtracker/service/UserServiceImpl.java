@@ -1,9 +1,9 @@
 package org.saphka.locationtracker.service;
 
+import org.saphka.locationtracker.api.model.UserCreateDTO;
 import org.saphka.locationtracker.api.model.UserDTO;
 import org.saphka.locationtracker.dao.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.config.annotation.authentication.configurers.provisioning.UserDetailsManagerConfigurer;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -31,7 +31,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Mono<UserDTO> createUser(UserDTO user) {
+    public Mono<UserDTO> createUser(UserCreateDTO user) {
         return null;
     }
 }

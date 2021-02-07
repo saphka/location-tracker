@@ -277,11 +277,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  token:
-                    type: string
-                    description: Token
+                $ref: '#/components/schemas/TokenResponse'
   /users/register:
     post:
       tags:
@@ -418,6 +414,13 @@ components:
         password:
           type: string
           description: User password
+    TokenResponse:
+      description: Token response
+      type: object
+      properties:
+        token:
+          type: string
+          description: Token
     Place:
       description: Place
       type: object
@@ -515,7 +518,7 @@ components:
             0:
               $ref: '#/components/examples/GroupNotFound'
             1:
-              $ref: '#/components/examples/UserNotFound'
+              $ref: '#/components/examples/UserNotFoundInGroup'
     PlaceNotFound:
       description: Place not found
       content:
@@ -531,10 +534,10 @@ components:
       value:
         code: GROUP_NOT_FOUND
         message: 'Group with id {id} not found'
-    UserNotFound:
+    UserNotFoundInGroup:
       description: User not found
       value:
-        code: USER_NOT_FOUND
+        code: USER_NOT_FOUND_IN_GROUP
         message: 'User with id {id} not found in group {id}'
     PlaceNotFound:
       description: Place not found

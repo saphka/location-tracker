@@ -4,10 +4,10 @@ import org.saphka.locationtracker.api.model.LocationDTO;
 import org.saphka.locationtracker.dao.LocationsRepository;
 import org.saphka.locationtracker.mapper.LocationMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 
-@Component
+@Service
 public class LocationServiceImpl implements LocationService {
 
     private final LocationsRepository repository;

@@ -5,6 +5,7 @@ import reactor.core.publisher.Mono;
 
 public interface UserRepository {
 
-    Mono<UsersRecord> getUserByIAlias(String alias);
+    Mono<UsersRecord> getUserByAlias(String alias);
 
+    Mono<UsersRecord> create(UsersRecord newRecord);
 }

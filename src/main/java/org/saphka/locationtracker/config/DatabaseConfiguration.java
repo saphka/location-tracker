@@ -12,7 +12,7 @@ import java.util.concurrent.Executors;
 public class DatabaseConfiguration {
 
     @Bean
-    public Scheduler jdbcScheduler(@Value("${spring.datasource.hikari.maximum-pool-size=}") Integer poolSize) {
+    public Scheduler jdbcScheduler(@Value("${spring.datasource.hikari.maximum-pool-size}") Integer poolSize) {
         return Schedulers.fromExecutor(Executors.newFixedThreadPool(poolSize));
     }
 

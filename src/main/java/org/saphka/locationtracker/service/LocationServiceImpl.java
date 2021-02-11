@@ -21,6 +21,6 @@ public class LocationServiceImpl implements LocationService {
 
     @Override
     public Flux<LocationDTO> getLocations(Integer userId) {
-        return repository.getLocationsByReceiver(userId).map(mapper::fromRecord);
+        return repository.getLocationsByReceiver(userId).map(mapper::sourceToTarget);
     }
 }

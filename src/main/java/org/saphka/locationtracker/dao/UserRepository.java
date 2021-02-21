@@ -1,11 +1,11 @@
 package org.saphka.locationtracker.dao;
 
-import org.saphka.locationtracker.dao.jooq.tables.records.UsersRecord;
+import org.saphka.locationtracker.dao.jooq.tables.records.UserRecord;
 import reactor.core.publisher.Mono;
 
 public interface UserRepository {
 
-    Mono<UsersRecord> getUserByAlias(String alias);
+    Mono<UserRecord> getUserByAlias(String alias);
 
-    Mono<UsersRecord> create(UsersRecord newRecord);
+    Mono<UserRecord> create(UserRecord newRecord);
 }

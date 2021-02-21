@@ -4,26 +4,23 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.2.xsd">
 
-    <changeSet id="20210206-03-places" author="saphka">
-        <createTable tableName="places">
+    <changeSet id="20210206-01-user" author="saphka">
+        <createTable tableName="user">
             <column name="id" type="int" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="description" type="varchar(1024)">
+            <column name="user_alias" type="varchar(512)">
                 <constraints nullable="false"/>
             </column>
-            <column name="latitude" type="varchar(1024)">
+            <column name="public_key" type="varchar(2048) ">
                 <constraints nullable="false"/>
             </column>
-            <column name="longitude" type="varchar(1024)">
+            <column name="password_hash" type="varchar(60)">
                 <constraints nullable="false"/>
-            </column>
-            <column name="owner_id" type="int">
-                <constraints nullable="false" referencedTableName="users" referencedColumnNames="id" deleteCascade="true" foreignKeyName="places_owner_id_fk_users"/>
             </column>
         </createTable>
-        <createIndex tableName="places" indexName="places_owner_id_index">
-            <column name="owner_id"/>
+        <createIndex tableName="user" indexName="user_user_alias_uindex" unique="true">
+            <column name="user_alias"/>
         </createIndex>
     </changeSet>
 

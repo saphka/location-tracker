@@ -2,7 +2,7 @@ package org.saphka.locationtracker.dao;
 
 import org.jooq.DSLContext;
 import org.saphka.locationtracker.dao.jooq.Tables;
-import org.saphka.locationtracker.dao.jooq.tables.records.UsersRecord;
+import org.saphka.locationtracker.dao.jooq.tables.records.UserRecord;
 import org.saphka.locationtracker.dao.util.AsyncHelper;
 import org.saphka.locationtracker.exception.ErrorCodeException;
 import org.saphka.locationtracker.exception.ErrorHandler;
@@ -30,9 +30,9 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public Mono<UsersRecord> getUserByAlias(String alias) {
-        return async.from(() -> dslContext.selectFrom(Tables.USERS)
-                .where(Tables.USERS.USER_ALIAS.eq(alias))
+    public Mono<UserRecord> getUserByAlias(String alias) {
+        return async.from(() -> dslContext.selectFrom(Tables.USER)
+                .where(Tables.USER.USER_ALIAS.eq(alias))
                 .fetchOptional()
                 .orElseThrow(() -> new ErrorCodeException(
                         ErrorHandler.USER_NOT_FOUND,
@@ -44,9 +44,9 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public Mono<UsersRecord> create(UsersRecord newRecord) {
+    public Mono<UserRecord> create(UserRecord newRecord) {
         return async.from(() -> {
-            UsersRecord record = mapper.copySource(newRecord, dslContext.newRecord(Tables.USERS));
+            UserRecord record = mapper.copySource(newRecord, dslContext.newRecord(Tables.USER));
             record.insert();
             return record;
         });

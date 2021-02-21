@@ -4,10 +4,6 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.2.xsd">
 
-    <include file="20210206-01-users.xml" relativeToChangelogFile="true"/>
-    <include file="20210206-02-groups.xml" relativeToChangelogFile="true"/>
-    <include file="20210206-03-places.xml" relativeToChangelogFile="true"/>
-    <include file="20210206-04-locations.xml" relativeToChangelogFile="true"/>
-    <include file="20210206-05-links.xml" relativeToChangelogFile="true"/>
+    <include file="20210206-01-user.xml" relativeToChangelogFile="true"/>
 
 </databaseChangeLog>

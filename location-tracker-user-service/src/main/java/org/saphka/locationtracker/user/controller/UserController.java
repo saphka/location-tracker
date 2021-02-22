@@ -25,7 +25,7 @@ public class UserController implements UsersApi {
 
     @Override
     public ResponseEntity<TokenResponseDTO> usersAuthPost(@Valid UserAuthDTO userAuthDTO) {
-        return null;
+        return ResponseEntity.accepted().body(new TokenResponseDTO().token(""));
     }
 
     @Override

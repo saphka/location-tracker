@@ -6,22 +6,22 @@ import org.saphka.locationtracker.user.domain.dto.UserValue;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository repository;
-    private final UserFactory userFactory;
-    private final UserMapper userMapper;
+    private final UserFactory factory;
+    private final UserMapper mapper;
 
-    public UserServiceImpl(UserRepository repository, UserFactory userFactory, UserMapper userMapper) {
+    public UserServiceImpl(UserRepository repository, UserFactory factory, UserMapper mapper) {
         this.repository = repository;
-        this.userFactory = userFactory;
-        this.userMapper = userMapper;
+        this.factory = factory;
+        this.mapper = mapper;
     }
 
     @Override
     public UserValue createUser(UserCreateData userData) {
-        User user = userFactory.make(null);
+        User user = factory.make(null);
         user.setAlias(userData.getAlias());
         user.setPublicKey(userData.getPublicKey());
         user.setNewPassword(userData.getPassword());
 
-        return userMapper.toUserValue(repository.save(user));
+        return mapper.toUserValue(repository.save(user));
     }
 }

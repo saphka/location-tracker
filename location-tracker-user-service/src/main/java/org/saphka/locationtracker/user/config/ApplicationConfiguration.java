@@ -1,5 +1,7 @@
 package org.saphka.locationtracker.user.config;
 
+import org.jooq.conf.RenderNameCase;
+import org.jooq.conf.Settings;
 import org.saphka.locationtracker.user.domain.*;
 import org.saphka.locationtracker.user.mapper.UserMapper;
 import org.springframework.context.annotation.Bean;
@@ -17,6 +19,12 @@ public class ApplicationConfiguration {
     @Bean
     public UserFactory userFactory(PasswordEncoder passwordEncoder) {
         return new UserFactoryImpl(passwordEncoder::encode);
+    }
+
+    @Bean
+    public Settings jooqSettings() {
+        return new Settings()
+                .withRenderNameCase(RenderNameCase.LOWER);
     }
 
 }

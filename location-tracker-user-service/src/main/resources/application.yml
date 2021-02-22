@@ -1,0 +1,13 @@
+spring:
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.xml
+
+  datasource:
+    hikari:
+      maximum-pool-size: 20
+  jooq:
+    sql-dialect: postgres
+
+jwt:
+  issuer: www.locationtracker.org
+

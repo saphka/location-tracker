@@ -1,0 +1,3 @@
+jwt:
+  keystore: classpath:keystore/token-dev.jks
+  keystore-password: verysecret

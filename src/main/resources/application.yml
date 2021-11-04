@@ -4,4 +4,5 @@ spring:
 
 jwt:
   issuer: www.locationtracker.org
-
+  lifetime: 15
+  keystore: classpath:keystore/token-prod.jks

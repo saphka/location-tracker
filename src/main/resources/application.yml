@@ -1,6 +1,13 @@
 spring:
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.yml
+  autoconfigure:
+    exclude: >
+      org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration,
+      org.springframework.boot.autoconfigure.jooq.JooqAutoConfiguration
+  datasource:
+    hikari:
+      maximum-pool-size: 1
 
 jwt:
   issuer: www.locationtracker.org

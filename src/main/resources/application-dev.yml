@@ -1,3 +1,13 @@
 jwt:
   keystore: classpath:keystore/token-dev.jks
   keystore-password: verysecret
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres
+    password: postgres
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5432/postgres
+    username: postgres
+    password: postgres

@@ -1,3 +1,7 @@
+server:
+  servlet:
+    context-path: /api/v1
+
 spring:
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.yml

@@ -1,6 +1,6 @@
 package org.saphka.location.tracker.user.model
 
-data class User(val id: Int, val alias: String, val publicKey: ByteArray, val passwordHash: ByteArray) {
+data class User(val id: Int, val alias: String, val publicKey: ByteArray, val passwordHash: String) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
@@ -18,4 +18,5 @@ data class User(val id: Int, val alias: String, val publicKey: ByteArray, val pa
         result = 31 * result + alias.hashCode()
         return result
     }
+
 }

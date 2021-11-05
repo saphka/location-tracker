@@ -26,16 +26,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                alias:
-                  type: string
-                  minLength: 1
-                  maxLength: 512
-                  description: User alias
-                publicKey:
-                  type: string
-                  description: User public key
+              $ref: '#/components/schemas/UserPatch'
       responses:
         202:
           description: Info updated
@@ -117,6 +108,7 @@ components:
           description: User alias
         publicKey:
           type: string
+          format: byte
           nullable: false
           description: User public key
         password:
@@ -127,6 +119,23 @@ components:
         - alias
         - publicKey
         - password
+    UserPatch:
+      type: object
+      properties:
+        alias:
+          type: string
+          minLength: 1
+          maxLength: 512
+          nullable: false
+          description: User alias
+        publicKey:
+          type: string
+          format: byte
+          nullable: false
+          description: User public key
+      required:
+        - alias
+        - publicKey
     TokenResponse:
       description: Token response
       type: object

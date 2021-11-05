@@ -14,8 +14,9 @@ interface UserDAO {
 
     fun findUser(alias: String): Mono<User>
 
-    fun createUser(user: User): Mono<User>
+    fun createUser(alias: String, publicKey: ByteArray, passwordHash: String): Mono<User>
 
+    fun updateUser(user: User): Mono<User>
 }
 
 @Service
@@ -32,10 +33,19 @@ class UserDAOImpl(private val create: DSLContext) : UserDAO {
         ).next().map { mapUserRecord(it) }
     }
 
-    override fun createUser(user: User): Mono<User> {
+    override fun createUser(alias: String, publicKey: ByteArray, passwordHash: String): Mono<User> {
         return Mono.from(
-            create.insertInto(USER).columns(USER.ID, USER.USER_ALIAS, USER.PUBLIC_KEY, USER.PASSWORD_HASH)
-                .values(user.id, user.alias, user.publicKey, user.passwordHash)
+            create.insertInto(USER).columns(USER.USER_ALIAS, USER.PUBLIC_KEY, USER.PASSWORD_HASH)
+                .values(alias, publicKey, passwordHash)
+                .returning()
+        ).map { mapUserRecord(it) }
+    }
+
+    override fun updateUser(user: User): Mono<User> {
+        return Mono.from(
+            create.update(USER)
+                .set(USER.USER_ALIAS, user.alias)
+                .set(USER.PUBLIC_KEY, user.publicKey)
                 .returning()
         ).map { mapUserRecord(it) }
     }

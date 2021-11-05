@@ -25,7 +25,7 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: password_hash
-                  type: bytea
+                  type: text
                   constraints:
                     nullable: false
         - createIndex:

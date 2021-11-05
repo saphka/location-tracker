@@ -20,12 +20,12 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: public_key
-                  type: varchar(2048)
+                  type: bytea
                   constraints:
                     nullable: false
               - column:
                   name: password_hash
-                  type: varchar(60)
+                  type: bytea
                   constraints:
                     nullable: false
         - createIndex:

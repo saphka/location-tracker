@@ -18,7 +18,7 @@ interface JwtService {
 }
 
 @Service
-class JwtServiceImpl(val jwtProperties: JwtProperties, val jwtKeyPair: KeyPair) : JwtService {
+class JwtServiceImpl(private val jwtProperties: JwtProperties, private val jwtKeyPair: KeyPair) : JwtService {
     override fun createToken(user: User): String {
         val now = Instant.now()
         return Jwts.builder()

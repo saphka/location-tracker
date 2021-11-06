@@ -2,6 +2,7 @@ package org.saphka.location.tracker.user.configuration
 
 import org.saphka.location.tracker.user.configuration.properties.JwtProperties
 import org.saphka.location.tracker.user.service.JwtService
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -26,6 +27,7 @@ import java.security.KeyStore
 import java.security.PrivateKey
 
 private const val TOKEN_ALIAS = "token"
+private const val BEARER = "Bearer "
 
 @Configuration
 class SecurityConfiguration {
@@ -58,9 +60,8 @@ class SecurityConfiguration {
 
         return http.authorizeExchange()
             .pathMatchers(HttpMethod.POST, "/users/register", "/users/auth")
-//            .pathMatchers("/**")
             .permitAll()
-            .pathMatchers("/**").hasRole("USER")
+            .pathMatchers("/**").hasAuthority("USER")
             .and()
             .addFilterAt(authenticationWebFilter, SecurityWebFiltersOrder.AUTHENTICATION)
             .httpBasic().disable()
@@ -74,13 +75,15 @@ class SecurityConfiguration {
 
 @Component
 class JwtAuthenticationManager(private val jwtService: JwtService) : ReactiveAuthenticationManager {
+
+    private val log = LoggerFactory.getLogger(this::class.java)
+
     override fun authenticate(authentication: Authentication): Mono<Authentication> {
         return Mono.just(authentication)
             .map { jwtService.validateToken(it.credentials as String) }
-            .onErrorResume { Mono.empty() }
             .map { token ->
                 UsernamePasswordAuthenticationToken(
-                    token.body.subject,
+                    (token.body.subject as String).toInt(),
                     authentication.credentials as String,
                     token.body.get("roles", MutableList::class.java).map { SimpleGrantedAuthority(it as String) }
                 )
@@ -94,7 +97,9 @@ class JwtServerAuthenticationConverter : ServerAuthenticationConverter {
         return Mono.justOrEmpty(exchange)
             .flatMap { Mono.justOrEmpty(it.request.headers[AUTHORIZATION]) }
             .filter { it.isNotEmpty() }
-            .map { it[0].substring("Bearer ".length) }
+            .map { it[0] }
+            .filter { it.startsWith(BEARER) }
+            .map { it.substring(BEARER.length) }
             .map { UsernamePasswordAuthenticationToken(it, it) }
     }
 }

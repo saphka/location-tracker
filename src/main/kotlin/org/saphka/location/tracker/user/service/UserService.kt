@@ -9,17 +9,16 @@ import org.saphka.location.tracker.user.model.User
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
-import java.util.*
 
 interface UserService {
 
-    fun getUserByAlias(alias: String): Mono<User>
+    fun getUserById(id: Int): Mono<User>
 
     fun authUser(authRequest: UserAuthDTO): Mono<Token>
 
     fun createUser(createRequest: UserCreateDTO): Mono<User>
 
-    fun updateUser(alias: String, updateRequest: UserPatchDTO): Mono<User>
+    fun updateUser(id: Int, updateRequest: UserPatchDTO): Mono<User>
 }
 
 @Service
@@ -28,8 +27,8 @@ class UserServiceImpl(
     private val jwtService: JwtService,
     private val passwordEncoder: PasswordEncoder
 ) : UserService {
-    override fun getUserByAlias(alias: String): Mono<User> {
-        return userDAO.findUser(alias)
+    override fun getUserById(id: Int): Mono<User> {
+        return userDAO.findUser(id)
     }
 
     override fun authUser(authRequest: UserAuthDTO): Mono<Token> {
@@ -46,7 +45,7 @@ class UserServiceImpl(
         )
     }
 
-    override fun updateUser(alias: String, updateRequest: UserPatchDTO): Mono<User> {
+    override fun updateUser(id: Int, updateRequest: UserPatchDTO): Mono<User> {
         TODO("Not yet implemented")
     }
 

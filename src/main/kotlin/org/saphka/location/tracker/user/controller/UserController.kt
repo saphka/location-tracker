@@ -25,7 +25,7 @@ class UserController(private val userService: UserService) : UsersApi {
 
     override fun usersMeGet(exchange: ServerWebExchange?): Mono<ResponseEntity<UserDTO>> {
         return exchange!!.getPrincipal<UsernamePasswordAuthenticationToken>()
-            .flatMap { userService.getUserByAlias(it.credentials as String) }
+            .flatMap { userService.getUserById(it.principal as Int) }
             .map { mapToUserDTO(it) }
             .map { ResponseEntity.ok(it) }
     }
@@ -37,7 +37,7 @@ class UserController(private val userService: UserService) : UsersApi {
         return Mono.zip(
             exchange!!.getPrincipal<UsernamePasswordAuthenticationToken>(), userPatchDTO!!
         )
-            .flatMap { userService.updateUser(it.t1.credentials as String, it.t2) }
+            .flatMap { userService.updateUser(it.t1.principal as Int, it.t2) }
             .map { mapToUserDTO(it) }
             .map { ResponseEntity.accepted().body(it) }
     }

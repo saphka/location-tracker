@@ -4,8 +4,8 @@ import org.saphka.location.tracker.user.api.model.UserAuthDTO
 import org.saphka.location.tracker.user.api.model.UserCreateDTO
 import org.saphka.location.tracker.user.api.model.UserPatchDTO
 import org.saphka.location.tracker.user.dao.UserDAO
-import org.saphka.location.tracker.user.model.Token
 import org.saphka.location.tracker.user.model.User
+import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
@@ -14,7 +14,7 @@ interface UserService {
 
     fun getUserById(id: Int): Mono<User>
 
-    fun authUser(authRequest: UserAuthDTO): Mono<Token>
+    fun authUser(authRequest: UserAuthDTO): Mono<String>
 
     fun createUser(createRequest: UserCreateDTO): Mono<User>
 
@@ -31,10 +31,11 @@ class UserServiceImpl(
         return userDAO.findUser(id)
     }
 
-    override fun authUser(authRequest: UserAuthDTO): Mono<Token> {
+    override fun authUser(authRequest: UserAuthDTO): Mono<String> {
         return userDAO.findUser(authRequest.alias)
+            .filter { passwordEncoder.matches(authRequest.password, it.passwordHash) }
+            .switchIfEmpty(Mono.error { BadCredentialsException("Username/password does not match") })
             .map { jwtService.createToken(it) }
-            .map { Token(it) }
     }
 
     override fun createUser(createRequest: UserCreateDTO): Mono<User> {
@@ -46,7 +47,16 @@ class UserServiceImpl(
     }
 
     override fun updateUser(id: Int, updateRequest: UserPatchDTO): Mono<User> {
-        TODO("Not yet implemented")
+        return userDAO.findUser(id)
+            .map {
+                User(
+                    it.id,
+                    updateRequest.alias,
+                    updateRequest.publicKey,
+                    it.passwordHash
+                )
+            }
+            .flatMap { userDAO.updateUser(it) }
     }
 
 }

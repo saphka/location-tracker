@@ -19,7 +19,7 @@ class UserController(private val userService: UserService) : UsersApi {
     ): Mono<ResponseEntity<TokenResponseDTO>> {
         return userAuthDTO!!
             .flatMap { userService.authUser(it) }
-            .map { TokenResponseDTO().token(it.accessToken) }
+            .map { TokenResponseDTO().token(it) }
             .map { ResponseEntity.accepted().body(it) }
     }
 

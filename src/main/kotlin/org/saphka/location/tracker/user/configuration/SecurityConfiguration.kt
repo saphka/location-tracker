@@ -5,6 +5,8 @@ import org.saphka.location.tracker.user.service.JwtService
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.http.HttpHeaders.AUTHORIZATION
+import org.springframework.http.HttpMethod
 import org.springframework.security.authentication.ReactiveAuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.config.web.server.SecurityWebFiltersOrder
@@ -49,26 +51,22 @@ class SecurityConfiguration {
         http: ServerHttpSecurity,
         jwtAuthenticationManager: ReactiveAuthenticationManager,
         jwtAuthenticationConverter: ServerAuthenticationConverter,
-        @Value("\${server.servlet.context-path}") rootPath: String
+        @Value("\${server.servlet.context-path:/api/v1/}") rootPath: String
     ): SecurityWebFilterChain {
         val authenticationWebFilter = AuthenticationWebFilter(jwtAuthenticationManager)
         authenticationWebFilter.setServerAuthenticationConverter(jwtAuthenticationConverter)
 
         return http.authorizeExchange()
-            .pathMatchers("${rootPath}/user/register", "${rootPath}/user/auth")
+            .pathMatchers(HttpMethod.POST, "/users/register", "/users/auth")
+//            .pathMatchers("/**")
             .permitAll()
-            .pathMatchers("/**")
-            .hasRole("USER")
+            .pathMatchers("/**").hasRole("USER")
             .and()
             .addFilterAt(authenticationWebFilter, SecurityWebFiltersOrder.AUTHENTICATION)
-            .httpBasic()
-            .disable()
-            .csrf()
-            .disable()
-            .formLogin()
-            .disable()
-            .logout()
-            .disable()
+            .httpBasic().disable()
+            .csrf().disable()
+            .formLogin().disable()
+            .logout().disable()
             .build()
     }
 
@@ -94,7 +92,7 @@ class JwtAuthenticationManager(private val jwtService: JwtService) : ReactiveAut
 class JwtServerAuthenticationConverter : ServerAuthenticationConverter {
     override fun convert(exchange: ServerWebExchange?): Mono<Authentication> {
         return Mono.justOrEmpty(exchange)
-            .flatMap { Mono.justOrEmpty(it.request.headers["Authorization"]) }
+            .flatMap { Mono.justOrEmpty(it.request.headers[AUTHORIZATION]) }
             .filter { it.isNotEmpty() }
             .map { it[0].substring("Bearer ".length) }
             .map { UsernamePasswordAuthenticationToken(it, it) }

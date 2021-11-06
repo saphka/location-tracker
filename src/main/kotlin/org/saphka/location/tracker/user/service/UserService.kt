@@ -41,7 +41,7 @@ class UserServiceImpl(
     override fun createUser(createRequest: UserCreateDTO): Mono<User> {
         return userDAO.createUser(
             createRequest.alias,
-            Base64.getDecoder().decode(createRequest.publicKey),
+            createRequest.publicKey,
             passwordEncoder.encode(createRequest.password)
         )
     }

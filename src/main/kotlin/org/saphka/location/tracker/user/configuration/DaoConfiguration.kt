@@ -4,6 +4,9 @@ import com.zaxxer.hikari.HikariDataSource
 import io.r2dbc.spi.ConnectionFactory
 import org.jooq.DSLContext
 import org.jooq.SQLDialect
+import org.jooq.conf.RenderNameCase
+import org.jooq.conf.RenderQuotedNames
+import org.jooq.conf.Settings
 import org.jooq.impl.DSL
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties
 import org.springframework.boot.context.properties.EnableConfigurationProperties
@@ -17,7 +20,11 @@ class DaoConfiguration {
 
     @Bean
     fun dslContext(connectionFactory: ConnectionFactory): DSLContext {
-        return DSL.using(connectionFactory, SQLDialect.POSTGRES)
+        val jooqSettings = Settings()
+        jooqSettings.renderNameCase = RenderNameCase.LOWER_IF_UNQUOTED
+        jooqSettings.renderQuotedNames = RenderQuotedNames.EXPLICIT_DEFAULT_UNQUOTED
+
+        return DSL.using(connectionFactory, SQLDialect.POSTGRES, jooqSettings)
     }
 
     @Bean

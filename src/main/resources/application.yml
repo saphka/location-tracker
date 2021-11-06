@@ -1,8 +1,6 @@
-server:
-  servlet:
-    context-path: /api/v1
-
 spring:
+  webflux:
+    base-path: /api/v1/
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.yml
   autoconfigure:

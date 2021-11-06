@@ -4,7 +4,7 @@ databaseChangeLog:
       author: saphka
       changes:
         - createTable:
-            tableName: user
+            tableName: user_table
             columns:
               - column:
                   name: id
@@ -29,7 +29,7 @@ databaseChangeLog:
                   constraints:
                     nullable: false
         - createIndex:
-            tableName: user
+            tableName: user_table
             indexName: user_user_alias_uindex
             unique: true
             columns:

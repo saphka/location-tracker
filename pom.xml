@@ -23,10 +23,16 @@
         <jooq.version>3.15.4</jooq.version>
         <openapi.generator.version>5.3.0</openapi.generator.version>
         <springfox.version>3.0.0</springfox.version>
-        <mapstruct.version>1.4.2.Final</mapstruct.version>
         <jjwt.version>0.11.2</jjwt.version>
         <testcontainers.version>1.16.2</testcontainers.version>
         <jib.version>3.1.4</jib.version>
+        <os-plugin.version>1.7.0</os-plugin.version>
+        <protobuf-plugin.version>0.6.1</protobuf-plugin.version>
+        <protobuf.version>3.17.3</protobuf.version>
+        <grpc.version>1.41.0</grpc.version>
+        <grpc-starter.version>4.5.9</grpc-starter.version>
+        <reactive-grpc.version>1.2.3</reactive-grpc.version>
+        <hibernate-validator.version>6.2.0.Final</hibernate-validator.version>
     </properties>
 
     <dependencyManagement>
@@ -39,11 +45,6 @@
                 <scope>import</scope>
             </dependency>
             <dependency>
-                <groupId>io.springfox</groupId>
-                <artifactId>springfox-swagger2</artifactId>
-                <version>${springfox.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>org.jooq</groupId>
                 <artifactId>jooq-meta-extensions-liquibase</artifactId>
                 <version>${jooq.version}</version>
@@ -52,11 +53,6 @@
                 <groupId>org.jooq</groupId>
                 <artifactId>jooq</artifactId>
                 <version>${jooq.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.mapstruct</groupId>
-                <artifactId>mapstruct</artifactId>
-                <version>${mapstruct.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.jetbrains.kotlin</groupId>
@@ -83,17 +79,18 @@
                 <artifactId>jjwt-jackson</artifactId>
                 <version>${jjwt.version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.salesforce.servicelibs</groupId>
+                <artifactId>reactor-grpc-stub</artifactId>
+                <version>${reactive-grpc.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-webflux</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger2</artifactId>
+            <artifactId>spring-boot-starter</artifactId>
         </dependency>
         <dependency>
             <groupId>org.jooq</groupId>
@@ -102,6 +99,11 @@
         <dependency>
             <groupId>javax.validation</groupId>
             <artifactId>validation-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate.validator</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>${hibernate-validator.version}</version>
         </dependency>
         <dependency>
             <groupId>org.yaml</groupId>
@@ -136,12 +138,25 @@
             <artifactId>spring-boot-starter-jdbc</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-security</artifactId>
+            <groupId>io.github.lognet</groupId>
+            <artifactId>grpc-spring-boot-starter</artifactId>
+            <version>${grpc-starter.version}</version>
         </dependency>
         <dependency>
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-crypto</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.projectreactor</groupId>
+            <artifactId>reactor-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.salesforce.servicelibs</groupId>
+            <artifactId>reactor-grpc-stub</artifactId>
         </dependency>
 
         <dependency>
@@ -168,6 +183,13 @@
     </dependencies>
 
     <build>
+        <extensions>
+            <extension>
+                <groupId>kr.motd.maven</groupId>
+                <artifactId>os-maven-plugin</artifactId>
+                <version>${os-plugin.version}</version>
+            </extension>
+        </extensions>
         <sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>
         <testSourceDirectory>${project.basedir}/src/test/kotlin</testSourceDirectory>
 
@@ -228,61 +250,6 @@
                         </dependency>
                     </dependencies>
                 </plugin>
-
-                <plugin>
-                    <groupId>org.openapitools</groupId>
-                    <artifactId>openapi-generator-maven-plugin</artifactId>
-                    <version>${openapi.generator.version}</version>
-
-                    <executions>
-                        <execution>
-                            <id>openapi-generate</id>
-                            <goals>
-                                <goal>generate</goal>
-                            </goals>
-
-                            <configuration>
-                                <inputSpec>${project.basedir}/src/main/resources/api/openapi.yaml</inputSpec>
-                                <generatorName>spring</generatorName>
-                                <apiPackage>${location.base.package}.api</apiPackage>
-                                <modelPackage>${location.base.package}.api.model</modelPackage>
-                                <generateApiDocumentation>false</generateApiDocumentation>
-                                <generateModelDocumentation>false</generateModelDocumentation>
-                                <generateSupportingFiles>false</generateSupportingFiles>
-                                <modelNameSuffix>DTO</modelNameSuffix>
-                                <skipValidateSpec>false</skipValidateSpec>
-                                <strictSpec>true</strictSpec>
-                                <configOptions>
-                                    <dateLibrary>java8</dateLibrary>
-                                    <openApiNullable>false</openApiNullable>
-                                    <interfaceOnly>true</interfaceOnly>
-                                    <useDocumentationAnnotations>false</useDocumentationAnnotations>
-                                    <skipDefaultInterface>true</skipDefaultInterface>
-                                    <reactive>true</reactive>
-                                </configOptions>
-                            </configuration>
-                        </execution>
-                    </executions>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.8.1</version>
-                    <configuration>
-                        <annotationProcessorPaths>
-                            <path>
-                                <groupId>org.mapstruct</groupId>
-                                <artifactId>mapstruct-processor</artifactId>
-                                <version>${mapstruct.version}</version>
-                            </path>
-                        </annotationProcessorPaths>
-                        <compilerArgs>
-                            <arg>-Amapstruct.suppressGeneratorTimestamp=true</arg>
-                            <arg>-Amapstruct.defaultComponentModel=spring</arg>
-                        </compilerArgs>
-                    </configuration>
-                </plugin>
                 <plugin>
                     <groupId>org.jetbrains.kotlin</groupId>
                     <artifactId>kotlin-maven-plugin</artifactId>
@@ -320,17 +287,46 @@
                         <to>
                             <image>saphka/location-tracker-user:${project.version}</image>
                         </to>
+                        <creationTime>USE_CURRENT_TIMESTAMP</creationTime>
                         <args>
                             <arg>-XX:+AlwaysActAsServerClassMachine</arg>
                             <arg>-XX:MaxRAMPercentage=70</arg>
                         </args>
-                        <creationTime>USE_CURRENT_TIMESTAMP</creationTime>
                     </configuration>
                     <executions>
                         <execution>
                             <phase>package</phase>
                             <goals>
                                 <goal>build</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.xolstice.maven.plugins</groupId>
+                    <artifactId>protobuf-maven-plugin</artifactId>
+                    <version>${protobuf-plugin.version}</version>
+                    <configuration>
+                        <protocArtifact>com.google.protobuf:protoc:${protobuf.version}:exe:${os.detected.classifier}
+                        </protocArtifact>
+                        <pluginId>grpc-java</pluginId>
+                        <pluginArtifact>io.grpc:protoc-gen-grpc-java:${grpc.version}:exe:${os.detected.classifier}
+                        </pluginArtifact>
+                        <protocPlugins>
+                            <protocPlugin>
+                                <id>reactor-grpc</id>
+                                <groupId>com.salesforce.servicelibs</groupId>
+                                <artifactId>reactor-grpc</artifactId>
+                                <version>${reactive-grpc.version}</version>
+                                <mainClass>com.salesforce.reactorgrpc.ReactorGrpcGenerator</mainClass>
+                            </protocPlugin>
+                        </protocPlugins>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>compile</goal>
+                                <goal>compile-custom</goal>
                             </goals>
                         </execution>
                     </executions>
@@ -344,8 +340,8 @@
                 <artifactId>jooq-codegen-maven</artifactId>
             </plugin>
             <plugin>
-                <groupId>org.openapitools</groupId>
-                <artifactId>openapi-generator-maven-plugin</artifactId>
+                <groupId>org.xolstice.maven.plugins</groupId>
+                <artifactId>protobuf-maven-plugin</artifactId>
             </plugin>
             <plugin>
                 <groupId>org.jetbrains.kotlin</groupId>

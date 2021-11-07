@@ -1,0 +1,44 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "org.saphka.location.tracker.user.grpc";
+option java_outer_classname = "UserProto";
+
+package user;
+
+service UserService {
+  rpc getUserInfo(DummyRequest) returns (UserResponse);
+  rpc register(UserCreateRequest) returns (UserResponse);
+  rpc changeUser(UserChangeRequest) returns (UserResponse);
+  rpc authUser(UserAuthRequest) returns (TokenResponse);
+}
+
+message DummyRequest {
+
+}
+
+message UserResponse {
+  int32 id = 1;
+  string alias = 2;
+  bytes publicKey = 3;
+}
+
+message UserCreateRequest {
+  string alias = 1;
+  bytes publicKey = 2;
+  string password = 3;
+}
+
+message UserChangeRequest {
+  string alias = 1;
+  bytes publicKey = 2;
+}
+
+message UserAuthRequest {
+  string alias = 1;
+  string password = 2;
+}
+
+message TokenResponse {
+  string token = 1;
+}

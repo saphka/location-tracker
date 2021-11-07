@@ -5,7 +5,6 @@ import io.jsonwebtoken.Jws
 import io.jsonwebtoken.Jwts
 import org.saphka.location.tracker.user.configuration.properties.JwtProperties
 import org.saphka.location.tracker.user.model.User
-import org.springframework.security.authentication.AuthenticationServiceException
 import org.springframework.stereotype.Service
 import java.security.KeyPair
 import java.time.Instant
@@ -43,7 +42,7 @@ class JwtServiceImpl(private val jwtProperties: JwtProperties, private val jwtKe
                 .build()
                 .parseClaimsJws(token)
         } catch (e: RuntimeException) {
-            throw AuthenticationServiceException("Bad token", e)
+            throw IllegalArgumentException("Bad token", e)
         }
 
 }

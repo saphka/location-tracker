@@ -1,5 +1,7 @@
 package org.saphka.location.tracker.user.configuration
 
+import org.lognet.springboot.grpc.security.AuthenticationSchemeSelector
+import org.lognet.springboot.grpc.security.BearerTokenAuthSchemeSelector
 import org.saphka.location.tracker.user.configuration.properties.JwtProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -10,7 +12,6 @@ import java.security.KeyStore
 import java.security.PrivateKey
 
 private const val TOKEN_ALIAS = "token"
-private const val BEARER = "Bearer "
 
 @Configuration
 class SecurityConfiguration {
@@ -30,5 +31,8 @@ class SecurityConfiguration {
 
     @Bean
     fun passwordEncoder(): PasswordEncoder = BCryptPasswordEncoder()
+
+    @Bean
+    fun authenticationSchemeSelector(): AuthenticationSchemeSelector = BearerTokenAuthSchemeSelector()
 
 }

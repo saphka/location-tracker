@@ -31,8 +31,6 @@
         <protobuf.version>3.17.3</protobuf.version>
         <grpc.version>1.41.0</grpc.version>
         <grpc-starter.version>4.5.9</grpc-starter.version>
-        <reactive-grpc.version>1.2.3</reactive-grpc.version>
-        <hibernate-validator.version>6.2.0.Final</hibernate-validator.version>
     </properties>
 
     <dependencyManagement>
@@ -79,11 +77,6 @@
                 <artifactId>jjwt-jackson</artifactId>
                 <version>${jjwt.version}</version>
             </dependency>
-            <dependency>
-                <groupId>com.salesforce.servicelibs</groupId>
-                <artifactId>reactor-grpc-stub</artifactId>
-                <version>${reactive-grpc.version}</version>
-            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -101,9 +94,8 @@
             <artifactId>validation-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.hibernate.validator</groupId>
-            <artifactId>hibernate-validator</artifactId>
-            <version>${hibernate-validator.version}</version>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
         <dependency>
             <groupId>org.yaml</groupId>
@@ -148,15 +140,19 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-crypto</artifactId>
+            <artifactId>spring-security-config</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-oauth2-resource-server</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-oauth2-jose</artifactId>
         </dependency>
         <dependency>
             <groupId>io.projectreactor</groupId>
             <artifactId>reactor-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.salesforce.servicelibs</groupId>
-            <artifactId>reactor-grpc-stub</artifactId>
         </dependency>
 
         <dependency>
@@ -312,15 +308,6 @@
                         <pluginId>grpc-java</pluginId>
                         <pluginArtifact>io.grpc:protoc-gen-grpc-java:${grpc.version}:exe:${os.detected.classifier}
                         </pluginArtifact>
-                        <protocPlugins>
-                            <protocPlugin>
-                                <id>reactor-grpc</id>
-                                <groupId>com.salesforce.servicelibs</groupId>
-                                <artifactId>reactor-grpc</artifactId>
-                                <version>${reactive-grpc.version}</version>
-                                <mainClass>com.salesforce.reactorgrpc.ReactorGrpcGenerator</mainClass>
-                            </protocPlugin>
-                        </protocPlugins>
                     </configuration>
                     <executions>
                         <execution>

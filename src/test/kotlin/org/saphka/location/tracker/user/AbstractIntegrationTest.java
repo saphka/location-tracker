@@ -1,6 +1,7 @@
 package org.saphka.location.tracker.user;
 
 import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -15,6 +16,7 @@ import org.testcontainers.utility.DockerImageName;
 @ContextConfiguration(
         initializers = AbstractIntegrationTest.Initializer.class
 )
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class AbstractIntegrationTest {
 
     private static final PostgreSQLContainer<?> database = new PostgreSQLContainer<>(DockerImageName.parse("postgres:13-alpine"));
@@ -32,7 +34,8 @@ public class AbstractIntegrationTest {
                     "spring.r2dbc.password=" + database.getPassword(),
                     "spring.datasource.url=" + database.getJdbcUrl(),
                     "spring.datasource.username=" + database.getUsername(),
-                    "spring.datasource.password=" + database.getPassword()
+                    "spring.datasource.password=" + database.getPassword(),
+                    "grpc.port=0"
             );
         }
     }

@@ -8,6 +8,7 @@ import org.lognet.springboot.grpc.security.GrpcSecurity
 import org.saphka.location.tracker.user.dao.UserDAO
 import org.saphka.location.tracker.user.grpc.*
 import org.saphka.location.tracker.user.model.User
+import org.springframework.security.access.annotation.Secured
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.oauth2.server.resource.BearerTokenAuthenticationToken
 import org.springframework.stereotype.Service
@@ -69,6 +70,7 @@ class UserServiceImpl(
 class UserServiceGrpcImpl(private val userService: UserService, private val jwtService: JwtService) :
     UserServiceGrpc.UserServiceImplBase() {
 
+    @Secured
     override fun getUserInfo(request: DummyRequest, responseObserver: StreamObserver<UserResponse>) {
         return GrpcUtil.processCall(
             request,
@@ -90,6 +92,7 @@ class UserServiceGrpcImpl(private val userService: UserService, private val jwtS
         }
     }
 
+    @Secured
     override fun changeUser(request: UserChangeRequest, responseObserver: StreamObserver<UserResponse>) {
         return GrpcUtil.processCall(
             request,

@@ -11,11 +11,12 @@ import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.lognet.springboot.grpc.autoconfigure.GRpcServerProperties
-import org.saphka.location.tracker.user.grpc.DummyRequest
-import org.saphka.location.tracker.user.grpc.UserChangeRequest
-import org.saphka.location.tracker.user.grpc.UserCreateRequest
-import org.saphka.location.tracker.user.grpc.UserServiceGrpc
+import org.lognet.springboot.grpc.security.AuthClientInterceptor
+import org.lognet.springboot.grpc.security.AuthHeader
+import org.saphka.location.tracker.user.grpc.*
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.test.context.jdbc.Sql
+import java.nio.ByteBuffer
 import java.security.KeyPairGenerator
 
 class LocationTrackerUserApplicationTest : AbstractIntegrationTest() {
@@ -42,7 +43,7 @@ class LocationTrackerUserApplicationTest : AbstractIntegrationTest() {
 
     @Test
     fun `Register user`() {
-        val encodedPublicKey = KeyPairGenerator.getInstance("RSA").genKeyPair().public.encoded
+        val encodedPublicKey = createPublicKey()
         val userResponse = client.register(
             UserCreateRequest.newBuilder()
                 .setAlias("test")
@@ -56,9 +57,11 @@ class LocationTrackerUserApplicationTest : AbstractIntegrationTest() {
         )
 
         assertThat(userResponse.alias).isEqualTo("test")
-        assertThat(userResponse.id).isEqualTo(1)
+        assertThat(userResponse.id).isEqualTo(2)
         assertThat(userResponse.publicKey.toByteArray()).isEqualTo(encodedPublicKey)
     }
+
+    private fun createPublicKey() = KeyPairGenerator.getInstance("RSA").genKeyPair().public.encoded
 
     @Test
     fun `Get Me No Auth`() {
@@ -72,6 +75,22 @@ class LocationTrackerUserApplicationTest : AbstractIntegrationTest() {
         val statusException =
             assertThrows<StatusRuntimeException> { client.changeUser(UserChangeRequest.getDefaultInstance()) }
         assertThat(statusException.status.code).isEqualTo(Status.UNAUTHENTICATED.code)
+    }
+
+    @Test
+    @Sql("classpath:user_data.sql")
+    fun `Get Me Auth`() {
+        val tokenResponse =
+            client.authUser(UserAuthRequest.newBuilder().setAlias("saphka").setPassword("location").build())
+
+        val authClientInterceptor = AuthClientInterceptor(AuthHeader.builder().bearer().tokenSupplier {
+            ByteBuffer.wrap(tokenResponse.tokenBytes.toByteArray())
+        }.build())
+
+        val userInfo = client.withInterceptors(authClientInterceptor)
+            .getUserInfo(DummyRequest.getDefaultInstance())
+
+        assertThat(userInfo.alias).isEqualTo("saphka")
     }
 
 }

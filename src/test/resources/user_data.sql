@@ -1,0 +1,4 @@
+INSERT INTO user_table(user_alias, public_key, password_hash)
+VALUES ('saphka', decode(
+        'MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEApYsZPIXjw3ggYNJgMrRWw6E/tIk1rmxGtz39J+E76bxDqoUUhiK6H3UiKs68V0r3gSdbayrNm2lZ34ZimVgG3JiibsHJBJa/8RK+DV6q/HkhM2qqDJfAyEfbpmBxGfk1iYk4GCmKVCMrpedgpVnFvybl3DwFTkWSPtq897N5F9uSwuoGdMcb+d1THUMH3hGYvq6U1Fbi/V7Hy/8eot+Zr9OZGf3uoGpOr7mMgPzDtz5kY0sb7leiUIpTkC9pR6bC83pGIyLiy20wV9uG+l0CE8JYTlR6NObj+PE07tz1dL7ulXFyYPe8ys19LlpwfWp/QiXt43d+gRDbSwBAbTj9VY8mOftKC6RkZaxuOvHXsXubyLCD72bcNK/ydtGsipdAE6jxbvU/f4AEHAinospBTh5b7or8TU0SnM1QddvaM21CwyuPw5/mkeHpK//D9AmpYHnW9rSSdUHya6ywUSzAArF/sf5YPYa9gIK3eYtqxx7v/nZjORXupK3ooR05S3/kQo8inBIyNmQHMMd/StfomIr96Db5ZuORoXngBDVUHMZjX+WhDSbdBriwDBvgxuHJNCIhZ763UZ8x6MhgdBee1QvJD10Z4m2gReeC26b3RniFhGwpuVhs8DFQXxPLAbvX83QWL7ODcdV1TykV5iPiPs82PCAZiO1rmtMm+6TFc3ECAwEAAQ==',
+        'base64'), '$2a$12$7OoHpe/vO8ewDCg7omcJROLxuOr/PlD9IoydBsp70ZiWJ.uBNPB/y');

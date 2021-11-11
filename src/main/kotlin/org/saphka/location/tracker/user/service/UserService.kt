@@ -10,7 +10,7 @@ import org.saphka.location.tracker.user.grpc.*
 import org.saphka.location.tracker.user.model.User
 import org.springframework.security.access.annotation.Secured
 import org.springframework.security.crypto.password.PasswordEncoder
-import org.springframework.security.oauth2.server.resource.BearerTokenAuthenticationToken
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
 
@@ -67,7 +67,7 @@ class UserServiceImpl(
 }
 
 @GRpcService
-class UserServiceGrpcImpl(private val userService: UserService, private val jwtService: JwtService) :
+class UserServiceGrpcImpl(private val userService: UserService) :
     UserServiceGrpc.UserServiceImplBase() {
 
     @Secured
@@ -82,7 +82,7 @@ class UserServiceGrpcImpl(private val userService: UserService, private val jwtS
                         val context = it.get<Context>(GrpcUtil.GRPC_CONTEXT_KEY)
                         val authentication = GrpcSecurity.AUTHENTICATION_CONTEXT_KEY.get(context)
                         val sub =
-                            jwtService.parseToken((authentication as BearerTokenAuthenticationToken).token).body.subject.toInt()
+                            (authentication as JwtAuthenticationToken).token.subject.toInt()
                         userService.getUserById(sub)
                     }
                 }
@@ -104,7 +104,7 @@ class UserServiceGrpcImpl(private val userService: UserService, private val jwtS
                         val context = it.get<Context>(GrpcUtil.GRPC_CONTEXT_KEY)
                         val authentication = GrpcSecurity.AUTHENTICATION_CONTEXT_KEY.get(context)
                         val sub =
-                            jwtService.parseToken((authentication as BearerTokenAuthenticationToken).token).body.subject.toInt()
+                            (authentication as JwtAuthenticationToken).token.subject.toInt()
                         userService.updateUser(sub, userChangeData)
                     }
                 }

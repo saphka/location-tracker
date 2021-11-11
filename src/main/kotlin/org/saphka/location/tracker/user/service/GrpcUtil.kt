@@ -1,6 +1,5 @@
 package org.saphka.location.tracker.user.service
 
-import com.google.common.base.Preconditions
 import io.grpc.Context
 import io.grpc.Status
 import io.grpc.StatusException
@@ -20,14 +19,16 @@ class GrpcUtil {
             delegate: Function<Mono<TRequest>, Mono<TResponse>>
         ) {
             try {
+                val currentGrpcContext = Context.current()
                 val rxRequest =
-                    if (request != null) {
-                        val currentGrpcContext = Context.current()
-                        Mono.just(request)
-                            .contextWrite { ctx -> ctx.put(GRPC_CONTEXT_KEY, currentGrpcContext) }
-                    } else Mono.empty()
+                    if (request != null) Mono.just(request) else Mono.empty()
 
-                val rxResponse = Preconditions.checkNotNull(delegate.apply(rxRequest))
+                val rxResponse =
+                    delegate
+                        .apply(rxRequest)
+                        .contextWrite {
+                            it.put(GRPC_CONTEXT_KEY, currentGrpcContext)
+                        }
                 rxResponse.subscribe(
                     { value: TResponse ->
                         // Don't try to respond if the server has already canceled the request

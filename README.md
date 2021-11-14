@@ -1,3 +1,3 @@
-# Location tracker user
+# Location tracker
 
-Manage user data, auth and register
+Stores encrypted location data and uses e2e encryption to share it with friends

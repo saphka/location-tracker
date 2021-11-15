@@ -20,15 +20,13 @@ class GrpcReactiveWrapper {
         ) {
             try {
                 val currentGrpcContext = Context.current()
-                val rxRequest =
-                    if (request != null) Mono.just(request) else Mono.empty()
+                val rxRequest = if (request != null) Mono.just(request) else Mono.empty()
 
-                val rxResponse =
-                    delegate
-                        .apply(rxRequest)
-                        .contextWrite {
-                            it.put(GRPC_CONTEXT_KEY, currentGrpcContext)
-                        }
+                val rxResponse = delegate
+                    .apply(rxRequest)
+                    .contextWrite {
+                        it.put(GRPC_CONTEXT_KEY, currentGrpcContext)
+                    }
                 rxResponse.subscribe(
                     { value: TResponse ->
                         // Don't try to respond if the server has already canceled the request
@@ -37,13 +35,7 @@ class GrpcReactiveWrapper {
                         }
                         responseObserver.onNext(value)
                     },
-                    { throwable: Throwable ->
-                        responseObserver.onError(
-                            prepareError(
-                                throwable
-                            )
-                        )
-                    },
+                    { responseObserver.onError(Status.fromThrowable(it).asRuntimeException()) },
                     { responseObserver.onCompleted() }
                 )
             } catch (throwable: Throwable) {

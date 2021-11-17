@@ -30,8 +30,7 @@ message UserCreateRequest {
 }
 
 message UserChangeRequest {
-  string alias = 1;
-  bytes publicKey = 2;
+  bytes publicKey = 1;
 }
 
 message UserAuthRequest {

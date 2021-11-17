@@ -18,6 +18,8 @@ databaseChangeLog:
                   type: varchar(512)
                   constraints:
                     nullable: false
+                    unique: true
+                    uniqueConstraintName: c_user_alias_unique
               - column:
                   name: public_key
                   type: bytea

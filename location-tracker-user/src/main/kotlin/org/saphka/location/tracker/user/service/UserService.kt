@@ -2,6 +2,7 @@ package org.saphka.location.tracker.user.service
 
 import com.google.protobuf.ByteString
 import io.grpc.Context
+import io.grpc.Status
 import io.grpc.stub.StreamObserver
 import org.lognet.springboot.grpc.GRpcService
 import org.lognet.springboot.grpc.security.GrpcSecurity
@@ -41,7 +42,9 @@ class UserServiceImpl(
     override fun authUser(authRequest: UserAuthRequest): Mono<String> {
         return userDAO.findUser(authRequest.alias)
             .filter { passwordEncoder.matches(authRequest.password, it.passwordHash) }
-            .switchIfEmpty(Mono.error { IllegalArgumentException("Username/password does not match") })
+            .switchIfEmpty(Mono.error {
+                Status.UNAUTHENTICATED.withDescription("Password does not match").asRuntimeException()
+            })
             .map { jwtService.createToken(it.id.toString()) }
     }
 
@@ -58,7 +61,7 @@ class UserServiceImpl(
             .map {
                 User(
                     it.id,
-                    updateRequest.alias,
+                    it.alias,
                     updateRequest.publicKey.toByteArray(),
                     it.passwordHash
                 )

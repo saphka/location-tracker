@@ -2,8 +2,6 @@ package org.saphka.location.tracker.commons.grpc
 
 import io.grpc.Context
 import io.grpc.Status
-import io.grpc.StatusException
-import io.grpc.StatusRuntimeException
 import io.grpc.stub.ServerCallStreamObserver
 import io.grpc.stub.StreamObserver
 import reactor.core.publisher.Mono
@@ -39,15 +37,7 @@ class GrpcReactiveWrapper {
                     { responseObserver.onCompleted() }
                 )
             } catch (throwable: Throwable) {
-                responseObserver.onError(prepareError(throwable))
-            }
-        }
-
-        private fun prepareError(throwable: Throwable): Throwable {
-            return if (throwable is StatusException || throwable is StatusRuntimeException) {
-                throwable
-            } else {
-                Status.fromThrowable(throwable).asException()
+                responseObserver.onError(Status.fromThrowable(throwable).asRuntimeException())
             }
         }
     }

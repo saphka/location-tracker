@@ -74,7 +74,7 @@ class JwtServiceTest {
         assertThat(jwt.issuedAt).isCloseTo(Instant.now(), TemporalUnitLessThanOffset(1, ChronoUnit.SECONDS))
         assertThat(jwt.expiresAt).isCloseTo(
             Instant.now().plus(15, ChronoUnit.MINUTES),
-            TemporalUnitLessThanOffset(1, ChronoUnit.SECONDS)
+            TemporalUnitLessThanOffset(5, ChronoUnit.SECONDS)
         )
         assertThat(jwt.getClaimAsStringList("scope")).isEqualTo(listOf("user"))
     }

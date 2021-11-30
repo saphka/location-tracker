@@ -18,5 +18,4 @@ data class User(val id: Int, val alias: String, val publicKey: ByteArray, val pa
         result = 31 * result + alias.hashCode()
         return result
     }
-
 }

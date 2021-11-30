@@ -11,13 +11,9 @@ import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
 interface UserDAO {
-
     fun findUser(id: Int): Mono<User>
-
     fun findUser(alias: String): Mono<User>
-
     fun createUser(alias: String, publicKey: ByteArray, passwordHash: String): Mono<User>
-
     fun updateUser(user: User): Mono<User>
 }
 

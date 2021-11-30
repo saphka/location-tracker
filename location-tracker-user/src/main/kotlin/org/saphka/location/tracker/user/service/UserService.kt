@@ -18,13 +18,9 @@ import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
 
 interface UserService {
-
     fun getUserById(id: Int): Mono<User>
-
     fun authUser(authRequest: UserAuthRequest): Mono<String>
-
     fun createUser(createRequest: UserCreateRequest): Mono<User>
-
     fun updateUser(id: Int, updateRequest: UserChangeRequest): Mono<User>
 }
 
@@ -68,7 +64,6 @@ class UserServiceImpl(
             }
             .flatMap { userDAO.updateUser(it) }
     }
-
 }
 
 @GRpcService
@@ -76,7 +71,7 @@ class UserServiceGrpcImpl(private val userService: UserService) :
     UserServiceGrpc.UserServiceImplBase() {
 
     @Secured
-    override fun getUserInfo(request: DummyRequest, responseObserver: StreamObserver<UserResponse>) {
+    override fun getCurrentUserInfo(request: DummyMessage, responseObserver: StreamObserver<UserResponse>) {
         return GrpcReactiveWrapper.wrap(
             request,
             responseObserver
@@ -98,7 +93,7 @@ class UserServiceGrpcImpl(private val userService: UserService) :
     }
 
     @Secured
-    override fun changeUser(request: UserChangeRequest, responseObserver: StreamObserver<UserResponse>) {
+    override fun changeCurrentUser(request: UserChangeRequest, responseObserver: StreamObserver<UserResponse>) {
         return GrpcReactiveWrapper.wrap(
             request,
             responseObserver
@@ -152,5 +147,4 @@ class UserServiceGrpcImpl(private val userService: UserService) :
         .setAlias(it.alias)
         .setPublicKey(ByteString.copyFrom(it.publicKey))
         .build()
-
 }

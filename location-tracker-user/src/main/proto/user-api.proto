@@ -7,13 +7,20 @@ option java_outer_classname = "UserProto";
 package user;
 
 service UserService {
-  rpc getUserInfo(DummyRequest) returns (UserResponse);
   rpc register(UserCreateRequest) returns (UserResponse);
-  rpc changeUser(UserChangeRequest) returns (UserResponse);
   rpc authUser(UserAuthRequest) returns (TokenResponse);
+  rpc getCurrentUserInfo(DummyMessage) returns (UserResponse);
+  rpc changeCurrentUser(UserChangeRequest) returns (UserResponse);
 }
 
-message DummyRequest {
+service FriendService {
+  rpc getCurrentUserFriends(DummyMessage) returns (UserMultipleResponse);
+  rpc addFriend(FriendRequest) returns (DummyMessage);
+  rpc getPendingFriendRequests(DummyMessage) returns (FriendConfirmationMultipleResponse);
+  rpc confirmFriend(FriendConfirmation) returns (DummyMessage);
+}
+
+message DummyMessage {
 
 }
 
@@ -21,6 +28,10 @@ message UserResponse {
   int32 id = 1;
   string alias = 2;
   bytes publicKey = 3;
+}
+
+message UserMultipleResponse {
+  repeated UserResponse user = 1;
 }
 
 message UserCreateRequest {
@@ -40,4 +51,16 @@ message UserAuthRequest {
 
 message TokenResponse {
   string token = 1;
+}
+
+message FriendRequest {
+  string alias = 1;
+}
+
+message FriendConfirmation {
+  int32 friendId = 1;
+}
+
+message FriendConfirmationMultipleResponse {
+  repeated FriendConfirmation confirmation = 1;
 }

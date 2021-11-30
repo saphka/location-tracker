@@ -13,6 +13,7 @@ import org.junit.jupiter.api.assertThrows
 import org.lognet.springboot.grpc.autoconfigure.GRpcServerProperties
 import org.lognet.springboot.grpc.security.AuthClientInterceptor
 import org.lognet.springboot.grpc.security.AuthHeader
+import org.saphka.location.tracker.commons.test.AbstractIntegrationTest
 import org.saphka.location.tracker.user.grpc.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.jdbc.Sql
@@ -66,14 +67,14 @@ class LocationTrackerUserApplicationTest : AbstractIntegrationTest() {
     @Test
     fun `Get Me No Auth`() {
         val statusException =
-            assertThrows<StatusRuntimeException> { client.getUserInfo(DummyRequest.getDefaultInstance()) }
+            assertThrows<StatusRuntimeException> { client.getCurrentUserInfo(DummyMessage.getDefaultInstance()) }
         assertThat(statusException.status.code).isEqualTo(Status.UNAUTHENTICATED.code)
     }
 
     @Test
     fun `Change Me No Auth`() {
         val statusException =
-            assertThrows<StatusRuntimeException> { client.changeUser(UserChangeRequest.getDefaultInstance()) }
+            assertThrows<StatusRuntimeException> { client.changeCurrentUser(UserChangeRequest.getDefaultInstance()) }
         assertThat(statusException.status.code).isEqualTo(Status.UNAUTHENTICATED.code)
     }
 
@@ -88,7 +89,7 @@ class LocationTrackerUserApplicationTest : AbstractIntegrationTest() {
         }.build())
 
         val userInfo = client.withInterceptors(authClientInterceptor)
-            .getUserInfo(DummyRequest.getDefaultInstance())
+            .getCurrentUserInfo(DummyMessage.getDefaultInstance())
 
         assertThat(userInfo.alias).isEqualTo("saphka")
     }

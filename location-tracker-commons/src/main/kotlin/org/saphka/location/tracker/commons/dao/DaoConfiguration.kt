@@ -1,4 +1,4 @@
-package org.saphka.location.tracker.user.configuration
+package org.saphka.location.tracker.commons.dao
 
 import com.zaxxer.hikari.HikariDataSource
 import io.r2dbc.spi.ConnectionFactory
@@ -12,10 +12,12 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.PropertySource
 import javax.sql.DataSource
 
 @Configuration
 @EnableConfigurationProperties(DataSourceProperties::class)
+@PropertySource("classpath:dao.properties")
 class DaoConfiguration {
 
     @Bean

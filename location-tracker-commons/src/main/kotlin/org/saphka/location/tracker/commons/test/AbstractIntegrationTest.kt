@@ -1,4 +1,4 @@
-package org.saphka.location.tracker.user
+package org.saphka.location.tracker.commons.test
 
 import org.junit.jupiter.api.TestInstance
 import org.springframework.boot.test.context.SpringBootTest

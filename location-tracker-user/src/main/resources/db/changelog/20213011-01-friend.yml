@@ -1,0 +1,31 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20213011-01-friend
+      author: saphka
+      changes:
+        - createTable:
+            tableName: friend
+            columns:
+              - column:
+                  name: first_id
+                  type: int
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+                    referencedTableName: user_table
+                    referencedColumnNames: id
+                    foreignKeyName: fk_first_id_user
+              - column:
+                  name: second_id
+                  type: int
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+                    referencedTableName: user_table
+                    referencedColumnNames: id
+                    foreignKeyName: fk_second_id_user
+              - column:
+                  name: status
+                  type: varchar(20)
+                  constraints:
+                    nullable: false

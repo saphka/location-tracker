@@ -14,10 +14,18 @@ import org.testcontainers.utility.DockerImageName
 @ActiveProfiles("dev")
 @ContextConfiguration(initializers = [AbstractIntegrationTestInitializer::class])
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class AbstractIntegrationTest
+class AbstractIntegrationTest {
+    companion object {
+        val database =
+            TestPostgresSQLContainer(DockerImageName.parse("postgres:13-alpine"))
+    }
+
+}
+
 
 class AbstractIntegrationTestInitializer : ApplicationContextInitializer<ConfigurableApplicationContext> {
     override fun initialize(applicationContext: ConfigurableApplicationContext) {
+        val database = AbstractIntegrationTest.database
         database.start()
         TestPropertySourceUtils.addInlinedPropertiesToEnvironment(
             applicationContext,
@@ -31,10 +39,6 @@ class AbstractIntegrationTestInitializer : ApplicationContextInitializer<Configu
         )
     }
 
-    companion object {
-        private val database =
-            TestPostgreSQLContainer(DockerImageName.parse("postgres:13-alpine"))
-    }
 }
 
-class TestPostgreSQLContainer(image: DockerImageName) : PostgreSQLContainer<TestPostgreSQLContainer>(image)
+class TestPostgresSQLContainer(image: DockerImageName) : PostgreSQLContainer<TestPostgresSQLContainer>(image)

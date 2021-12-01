@@ -4,19 +4,31 @@
 
 plugins {
     id("org.saphka.location.java-conventions")
+    id("org.saphka.location.jooq-conventions")
+    id("org.saphka.location.protobuf-conventions")
+    id("org.saphka.location.docker-conventions")
+    id("org.springframework.boot").version("2.5.6")
 }
 
 dependencies {
     implementation(project(":location-tracker-commons"))
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.5.31")
-    implementation("org.jetbrains.kotlin:kotlin-reflect:1.5.31")
-    implementation("org.springframework.boot:spring-boot-starter-jdbc:2.5.6")
-    implementation("io.github.lognet:grpc-spring-boot-starter:4.5.9")
-    implementation("org.liquibase:liquibase-core:4.3.5")
-    runtimeOnly("org.postgresql:postgresql:42.2.24")
-    runtimeOnly("io.r2dbc:r2dbc-postgresql:0.8.10.RELEASE")
-    testImplementation("org.springframework.boot:spring-boot-starter-test:2.5.6")
-    testImplementation("io.github.lognet:grpc-client-spring-boot-starter:4.5.9")
+    implementation(libs.kotlin.lib)
+    implementation(libs.kotlin.reflect)
+    implementation(libs.spring.boot.starter.jdbc)
+    implementation(libs.spring.security.config)
+    implementation(libs.spring.security.oauth2.res)
+    implementation(libs.spring.security.oauth2.jose)
+    implementation(libs.grpc.starter)
+    implementation(libs.liquibase.core)
+    runtimeOnly(libs.postgresql)
+    runtimeOnly(libs.r2dbc.postgresql)
+    testImplementation(libs.spring.boot.starter.test)
+    testImplementation(libs.grpc.client.starter)
+    implementation(libs.reactor.core)
+}
+
+locationJooq {
+    packageName.set("org.saphka.location.tracker.user.dao.jooq")
 }
 
 description = "location-tracker-user"

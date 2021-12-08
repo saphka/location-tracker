@@ -12,6 +12,7 @@ import reactor.core.publisher.Mono
 
 interface UserDAO {
     fun findUser(id: Int): Mono<User>
+    fun findUsers(ids: List<Int>): Flux<User>
     fun findUser(alias: String): Mono<User>
     fun createUser(alias: String, publicKey: ByteArray, passwordHash: String): Mono<User>
     fun updateUser(user: User): Mono<User>
@@ -36,6 +37,12 @@ class UserDAOImpl(private val create: DSLContext) : UserDAO {
             .switchIfEmpty(Mono.error {
                 Status.NOT_FOUND.withDescription("User with alias $alias not found").asRuntimeException()
             })
+    }
+
+    override fun findUsers(ids: List<Int>): Flux<User> {
+        return Flux.from(
+            create.select().from(USER_TABLE).where(USER_TABLE.ID.`in`(ids))
+        ).map { mapUserRecord(it) }
     }
 
     override fun createUser(alias: String, publicKey: ByteArray, passwordHash: String): Mono<User> {

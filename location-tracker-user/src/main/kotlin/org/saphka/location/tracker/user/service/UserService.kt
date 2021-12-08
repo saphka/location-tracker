@@ -15,10 +15,12 @@ import org.springframework.security.access.annotation.Secured
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import org.springframework.stereotype.Service
+import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
 interface UserService {
     fun getUserById(id: Int): Mono<User>
+    fun getUserByIds(ids: List<Int>): Flux<User>
     fun authUser(authRequest: UserAuthRequest): Mono<String>
     fun createUser(createRequest: UserCreateRequest): Mono<User>
     fun updateUser(id: Int, updateRequest: UserChangeRequest): Mono<User>
@@ -33,6 +35,10 @@ class UserServiceImpl(
 
     override fun getUserById(id: Int): Mono<User> {
         return userDAO.findUser(id)
+    }
+
+    override fun getUserByIds(ids: List<Int>): Flux<User> {
+        return userDAO.findUsers(ids);
     }
 
     override fun authUser(authRequest: UserAuthRequest): Mono<String> {

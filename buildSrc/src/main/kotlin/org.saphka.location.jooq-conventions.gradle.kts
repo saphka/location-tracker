@@ -4,30 +4,28 @@
 
 plugins {
     `java-library`
+    id("org.saphka.location.java-conventions")
     id("nu.studer.jooq")
 }
 
+val versions = ext.properties["versions"] as Map<String, String>
+
 abstract class LocationJooqExtension {
     abstract val packageName: Property<String>
-    abstract val jooqVersion: Property<String>
-
-    init {
-        jooqVersion.set("3.15.4")
-    }
 }
 
 val locationJooqExtension = extensions.create<LocationJooqExtension>("locationJooq")
 
 afterEvaluate {
     dependencies {
-        jooqGenerator("org.jooq:jooq-meta-extensions-liquibase:${locationJooqExtension.jooqVersion.get()}")
-        jooqGenerator("org.liquibase:liquibase-core:3.10.3")
-        jooqGenerator("org.yaml:snakeyaml:1.28")
-        jooqGenerator("org.slf4j:slf4j-jdk14:1.7.30")
+        jooqGenerator("org.jooq:jooq-meta-extensions-liquibase:${versions["jooq"]}")
+        jooqGenerator("org.liquibase:liquibase-core:${versions["liquibase-core"]}")
+        jooqGenerator("org.yaml:snakeyaml:${versions["snakeyaml"]}")
+        jooqGenerator("org.slf4j:slf4j-jdk14:${versions["slf4j"]}")
     }
 
     jooq {
-        version.set("3.15.4")
+        version.set(versions["jooq"])
         configurations {
             create("main") {
                 generateSchemaSourceOnCompilation.set(true)

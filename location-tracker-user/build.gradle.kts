@@ -10,21 +10,23 @@ plugins {
     id("org.springframework.boot").version("2.5.6")
 }
 
+val versions = ext.properties["versions"] as Map<String, String>
+
 dependencies {
     implementation(project(":location-tracker-commons"))
-    implementation(libs.kotlin.lib)
-    implementation(libs.kotlin.reflect)
-    implementation(libs.spring.boot.starter.jdbc)
-    implementation(libs.spring.security.config)
-    implementation(libs.spring.security.oauth2.res)
-    implementation(libs.spring.security.oauth2.jose)
-    implementation(libs.grpc.starter)
-    implementation(libs.liquibase.core)
-    runtimeOnly(libs.postgresql)
-    runtimeOnly(libs.r2dbc.postgresql)
-    testImplementation(libs.spring.boot.starter.test)
-    testImplementation(libs.grpc.client.starter)
-    implementation(libs.reactor.core)
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${versions["kotlin"]}")
+    implementation("org.jetbrains.kotlin:kotlin-reflect:${versions["kotlin"]}")
+    implementation("org.springframework.boot:spring-boot-starter-jdbc:${versions["spring-boot"]}")
+    implementation("org.springframework.security:spring-security-config:${versions["spring-security"]}")
+    implementation("org.springframework.security:spring-security-oauth2-resource-server:${versions["spring-security"]}")
+    implementation("org.springframework.security:spring-security-oauth2-jose:${versions["spring-security"]}")
+    implementation("io.github.lognet:grpc-spring-boot-starter:${versions["grpc-starter"]}")
+    implementation("org.liquibase:liquibase-core:${versions["liquibase-core"]}")
+    implementation("io.projectreactor:reactor-core:${versions["reactor-core"]}")
+    runtimeOnly("org.postgresql:postgresql:${versions["postgresql"]}")
+    runtimeOnly("io.r2dbc:r2dbc-postgresql:${versions["r2dbc-postgresql"]}")
+    testImplementation("org.springframework.boot:spring-boot-starter-test:${versions["spring-boot"]}")
+    testImplementation("io.github.lognet:grpc-client-spring-boot-starter:${versions["grpc-starter"]}")
 }
 
 locationJooq {

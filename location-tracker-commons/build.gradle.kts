@@ -6,22 +6,24 @@ plugins {
     id("org.saphka.location.java-conventions")
 }
 
+val versions = ext.properties["versions"] as Map<String, String>
+
 dependencies {
-    implementation(libs.kotlin.lib)
-    implementation(libs.kotlin.reflect)
-    implementation(libs.jjwt.api)
-    implementation(libs.jjwt.impl)
-    implementation(libs.jjwt.jackson)
-    implementation(libs.spring.boot.starter)
-    implementation(libs.spring.security.config)
-    implementation(libs.spring.security.oauth2.res)
-    implementation(libs.spring.security.oauth2.jose)
-    implementation(libs.reactor.core)
-    implementation(libs.grpc.stub)
-    implementation(libs.jooq)
-    implementation(libs.hikari)
-    implementation(libs.spring.boot.starter.test)
-    implementation(libs.test.containers.postgresql)
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${versions["kotlin"]}")
+    implementation("org.jetbrains.kotlin:kotlin-reflect:${versions["kotlin"]}")
+    implementation("io.jsonwebtoken:jjwt-api:${versions["jjwt"]}")
+    implementation("io.jsonwebtoken:jjwt-impl:${versions["jjwt"]}")
+    implementation("io.jsonwebtoken:jjwt-jackson:${versions["jjwt"]}")
+    implementation("org.springframework.boot:spring-boot-starter:${versions["spring-boot"]}")
+    implementation("org.springframework.security:spring-security-config:${versions["spring-security"]}")
+    implementation("org.springframework.security:spring-security-oauth2-resource-server:${versions["spring-security"]}")
+    implementation("org.springframework.security:spring-security-oauth2-jose:${versions["spring-security"]}")
+    implementation("io.projectreactor:reactor-core:${versions["reactor-core"]}")
+    implementation("org.jooq:jooq:${versions["jooq"]}")
+    implementation("com.zaxxer:HikariCP:${versions["hikari"]}")
+    implementation("io.grpc:grpc-stub:${versions["grpc"]}")
+    implementation("org.springframework.boot:spring-boot-starter-test:${versions["spring-boot"]}")
+    implementation("org.testcontainers:postgresql:${versions["testcontainers"]}")
 }
 
 description = "location-tracker-commons"

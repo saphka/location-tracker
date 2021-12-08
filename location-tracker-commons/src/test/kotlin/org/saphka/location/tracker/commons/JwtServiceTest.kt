@@ -71,7 +71,7 @@ class JwtServiceTest {
 
         assertThat(jwt.issuer).isEqualTo(URL("http://www.issuer.com"))
         assertThat(jwt.subject).isEqualTo("subj")
-        assertThat(jwt.issuedAt).isCloseTo(Instant.now(), TemporalUnitLessThanOffset(1, ChronoUnit.SECONDS))
+        assertThat(jwt.issuedAt).isCloseTo(Instant.now(), TemporalUnitLessThanOffset(5, ChronoUnit.SECONDS))
         assertThat(jwt.expiresAt).isCloseTo(
             Instant.now().plus(15, ChronoUnit.MINUTES),
             TemporalUnitLessThanOffset(5, ChronoUnit.SECONDS)

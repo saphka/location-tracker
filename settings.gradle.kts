@@ -5,36 +5,3 @@
 rootProject.name = "location-tracker"
 include(":location-tracker-commons")
 include(":location-tracker-user")
-
-enableFeaturePreview("VERSION_CATALOGS")
-
-dependencyResolutionManagement {
-    versionCatalogs {
-        create("libs") {
-            alias("kotlin-lib").to("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.5.31")
-            alias("kotlin-reflect").to("org.jetbrains.kotlin:kotlin-reflect:1.5.31")
-            alias("jjwt-api").to("io.jsonwebtoken:jjwt-api:0.11.2")
-            alias("jjwt-impl").to("io.jsonwebtoken:jjwt-impl:0.11.2")
-            alias("jjwt-jackson").to("io.jsonwebtoken:jjwt-jackson:0.11.2")
-            alias("liquibase-core").to("org.liquibase:liquibase-core:3.10.3")
-            alias("postgresql").to("org.postgresql:postgresql:42.2.24")
-            alias("r2dbc-postgresql").to("io.r2dbc:r2dbc-postgresql:0.8.10.RELEASE")
-            alias("spring-boot-starter").to("org.springframework.boot:spring-boot-starter:2.5.6")
-            alias("spring-boot-starter-jdbc").to("org.springframework.boot:spring-boot-starter-jdbc:2.5.6")
-            alias("spring-boot-starter-test").to("org.springframework.boot:spring-boot-starter-test:2.5.6")
-            alias("spring-security-config").to("org.springframework.security:spring-security-config:5.5.3")
-            alias("spring-security-oauth2-res").to("org.springframework.security:spring-security-oauth2-resource-server:5.5.3")
-            alias("spring-security-oauth2-jose").to("org.springframework.security:spring-security-oauth2-jose:5.5.3")
-            alias("reactor-core").to("io.projectreactor:reactor-core:3.4.11")
-            alias("grpc-stub").to("io.grpc:grpc-stub:1.41.0")
-            alias("grpc-starter").to("io.github.lognet:grpc-spring-boot-starter:4.5.9")
-            alias("grpc-client-starter").to("io.github.lognet:grpc-client-spring-boot-starter:4.5.9")
-            alias("jooq").to("org.jooq:jooq:3.15.4")
-            alias("jooq-liquibase").to("org.jooq:jooq-meta-extensions-liquibase:3.15.4")
-            alias("hikari").to("com.zaxxer:HikariCP:4.0.3")
-            alias("snakeyaml").to("org.yaml:snakeyaml:1.28")
-            alias("slf4j").to("org.slf4j:slf4j-jdk14:1.7.30")
-            alias("test-containers-postgresql").to("org.testcontainers:postgresql:1.16.2")
-        }
-    }
-}

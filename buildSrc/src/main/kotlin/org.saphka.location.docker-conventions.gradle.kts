@@ -17,6 +17,7 @@ afterEvaluate {
     docker {
         name = "${project.name}:${project.version}"
         files(
+            rootProject.file("docker/Dockerfile"),
             bootJarTask.property("outputs")
         )
         buildArgs(

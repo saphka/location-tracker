@@ -11,10 +11,10 @@ service UserService {
   rpc authUser(UserAuthRequest) returns (TokenResponse);
   rpc getCurrentUserInfo(DummyMessage) returns (UserResponse);
   rpc changeCurrentUser(UserChangeRequest) returns (UserResponse);
+  rpc getCurrentUserFriends(DummyMessage) returns (UserMultipleResponse);
 }
 
 service FriendService {
-  rpc getCurrentUserFriends(DummyMessage) returns (UserMultipleResponse);
   rpc addFriend(FriendRequest) returns (DummyMessage);
   rpc getPendingFriendRequests(DummyMessage) returns (FriendConfirmationMultipleResponse);
   rpc confirmFriend(FriendConfirmation) returns (DummyMessage);

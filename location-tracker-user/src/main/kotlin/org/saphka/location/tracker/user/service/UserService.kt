@@ -20,7 +20,8 @@ import reactor.core.publisher.Mono
 
 interface UserService {
     fun getUserById(id: Int): Mono<User>
-    fun getUserByIds(ids: List<Int>): Flux<User>
+    fun getUserByAlias(alias: String): Mono<User>
+    fun getUserFriends(id: Int): Flux<User>
     fun authUser(authRequest: UserAuthRequest): Mono<String>
     fun createUser(createRequest: UserCreateRequest): Mono<User>
     fun updateUser(id: Int, updateRequest: UserChangeRequest): Mono<User>
@@ -37,8 +38,12 @@ class UserServiceImpl(
         return userDAO.findUser(id)
     }
 
-    override fun getUserByIds(ids: List<Int>): Flux<User> {
-        return userDAO.findUsers(ids);
+    override fun getUserByAlias(alias: String): Mono<User> {
+        return userDAO.findUser(alias)
+    }
+
+    override fun getUserFriends(id: Int): Flux<User> {
+        return userDAO.findUsersFriends(id)
     }
 
     override fun authUser(authRequest: UserAuthRequest): Mono<String> {
@@ -114,9 +119,7 @@ class UserServiceGrpcImpl(private val userService: UserService) :
                         userService.updateUser(sub, userChangeData)
                     }
                 }
-                .map {
-                    mapToUserResponse(it)
-                }
+                .map { mapToUserResponse(it) }
         }
     }
 
@@ -142,15 +145,45 @@ class UserServiceGrpcImpl(private val userService: UserService) :
         ) { req ->
             req
                 .flatMap { userService.createUser(it) }
-                .map {
-                    mapToUserResponse(it)
-                }
+                .map { mapToUserResponse(it) }
         }
     }
 
-    private fun mapToUserResponse(it: User) = UserResponse.newBuilder()
-        .setId(it.id)
-        .setAlias(it.alias)
-        .setPublicKey(ByteString.copyFrom(it.publicKey))
-        .build()
+    @Secured
+    override fun getCurrentUserFriends(
+        request: DummyMessage,
+        responseObserver: StreamObserver<UserMultipleResponse>
+    ) {
+        return GrpcReactiveWrapper.wrap(
+            request,
+            responseObserver
+        ) { req ->
+            req
+                .flatMapMany {
+                    Flux.deferContextual {
+                        val context = it.get<Context>(GrpcReactiveWrapper.GRPC_CONTEXT_KEY)
+                        val authentication = GrpcSecurity.AUTHENTICATION_CONTEXT_KEY.get(context)
+                        val sub =
+                            (authentication as JwtAuthenticationToken).token.subject.toInt()
+                        userService.getUserFriends(sub)
+                    }
+                }
+                .collectList()
+                .map { mapToUserMultiResponse(it) }
+        }
+    }
+
+    private fun mapToUserResponse(user: User) = UserResponse.newBuilder().let {
+        it.id = user.id
+        it.alias = user.alias
+        it.publicKey = ByteString.copyFrom(user.publicKey)
+        it.build()
+    }
+
+    private fun mapToUserMultiResponse(users: List<User>) = UserMultipleResponse.newBuilder().let { builder ->
+        users.forEach {
+            builder.addUser(mapToUserResponse(it))
+        }
+        builder.build()
+    }
 }

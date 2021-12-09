@@ -1,16 +1,12 @@
 package org.saphka.location.tracker.user.service
 
-import com.google.protobuf.ByteString
 import io.grpc.Context
 import io.grpc.stub.StreamObserver
 import org.lognet.springboot.grpc.GRpcService
 import org.lognet.springboot.grpc.security.GrpcSecurity
 import org.saphka.location.tracker.commons.grpc.GrpcReactiveWrapper
 import org.saphka.location.tracker.user.dao.FriendDAO
-import org.saphka.location.tracker.user.grpc.DummyMessage
-import org.saphka.location.tracker.user.grpc.FriendServiceGrpc
-import org.saphka.location.tracker.user.grpc.UserMultipleResponse
-import org.saphka.location.tracker.user.grpc.UserResponse
+import org.saphka.location.tracker.user.grpc.*
 import org.saphka.location.tracker.user.model.Friend
 import org.saphka.location.tracker.user.model.FriendStatus
 import org.springframework.security.access.annotation.Secured
@@ -20,15 +16,23 @@ import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
 interface FriendService {
-
     fun getFriends(userId: Int): Flux<Friend>
-
+    fun confirmFriend(userId: Int, friendId: Int): Mono<Friend>
+    fun createRequest(userId: Int, friendId: Int): Mono<Friend>
 }
 
 @Service
 class FriendServiceImpl(private val friendDAO: FriendDAO) : FriendService {
     override fun getFriends(userId: Int): Flux<Friend> {
         return friendDAO.getFriends(userId)
+    }
+
+    override fun confirmFriend(userId: Int, friendId: Int): Mono<Friend> {
+        return friendDAO.updateRequestStatus(userId, friendId, FriendStatus.CONFIRMED)
+    }
+
+    override fun createRequest(userId: Int, friendId: Int): Mono<Friend> {
+        return friendDAO.createFriendRequest(userId, friendId)
     }
 }
 
@@ -40,59 +44,82 @@ class FriendGrpcService(
     FriendServiceGrpc.FriendServiceImplBase() {
 
     @Secured
-    override fun getCurrentUserFriends(
+    override fun getPendingFriendRequests(
         request: DummyMessage,
-        responseObserver: StreamObserver<UserMultipleResponse>
+        responseObserver: StreamObserver<FriendConfirmationMultipleResponse>
     ) {
         return GrpcReactiveWrapper.wrap(
             request,
             responseObserver
         ) { req ->
             req
-                .flatMap {
-                    Mono.deferContextual {
+                .flatMapMany {
+                    Flux.deferContextual {
                         val context = it.get<Context>(GrpcReactiveWrapper.GRPC_CONTEXT_KEY)
                         val authentication = GrpcSecurity.AUTHENTICATION_CONTEXT_KEY.get(context)
                         val sub =
                             (authentication as JwtAuthenticationToken).token.subject.toInt()
-                        Mono.just(sub)
+                        friendService.getFriends(sub)
                     }
                 }
-                .flatMap { userId ->
-                    friendService.getFriends(userId)
-                        .filter { friend -> friend.status == FriendStatus.CONFIRMED }
-                        .collectList()
-                        .map { list ->
-                            mutableListOf<Int>().let { res ->
-                                res.addAll(list
-                                    .filter { friend -> friend.firstId != userId }
-                                    .map { it.firstId }
-                                )
-                                res.addAll(list
-                                    .filter { friend -> friend.secondId != userId }
-                                    .map { it.secondId }
-                                )
-                                res
-                            }
-                        }
-                }
-                .flatMapMany { ids ->
-                    userService.getUserByIds(ids)
-                }
-                .map {
-                    UserResponse.newBuilder().let { builder ->
-                        builder.id = it.id
-                        builder.alias = it.alias
-                        builder.publicKey = ByteString.copyFrom(it.publicKey)
-                        builder.build()
-                    }
+                .filter {
+                    it.status == FriendStatus.PENDING
                 }
                 .collectList()
-                .map {
-                    UserMultipleResponse.newBuilder()
-                        .addAllUser(it)
-                        .build()
+                .map { mapToPendingResponse(it) }
+        }
+    }
+
+    @Secured
+    override fun confirmFriend(
+        request: FriendConfirmation,
+        responseObserver: StreamObserver<DummyMessage>
+    ) {
+        return GrpcReactiveWrapper.wrap(
+            request,
+            responseObserver
+        ) { req ->
+            req.flatMap { confirmation ->
+                Mono.deferContextual {
+                    val context = it.get<Context>(GrpcReactiveWrapper.GRPC_CONTEXT_KEY)
+                    val authentication = GrpcSecurity.AUTHENTICATION_CONTEXT_KEY.get(context)
+                    val sub =
+                        (authentication as JwtAuthenticationToken).token.subject.toInt()
+                    friendService.confirmFriend(sub, confirmation.friendId)
                 }
+            }.map { DummyMessage.getDefaultInstance() }
+        }
+    }
+
+    @Secured
+    override fun addFriend(
+        request: FriendRequest,
+        responseObserver: StreamObserver<DummyMessage>
+    ) {
+        return GrpcReactiveWrapper.wrap(
+            request,
+            responseObserver
+        ) { req ->
+            req.flatMap {
+                userService.getUserByAlias(it.alias)
+            }.zipWith(Mono.deferContextual {
+                val context = it.get<Context>(GrpcReactiveWrapper.GRPC_CONTEXT_KEY)
+                val authentication = GrpcSecurity.AUTHENTICATION_CONTEXT_KEY.get(context)
+                val sub =
+                    (authentication as JwtAuthenticationToken).token.subject.toInt()
+                Mono.just(sub)
+            }).flatMap {
+                friendService.createRequest(friendId = it.t1.id, userId = it.t2)
+            }.map { DummyMessage.getDefaultInstance() }
+        }
+    }
+
+    private fun mapToPendingResponse(list: List<Friend>): FriendConfirmationMultipleResponse {
+        return FriendConfirmationMultipleResponse.newBuilder().let { builder ->
+            list.forEach { friend ->
+                builder.addConfirmationBuilder().friendId = friend.friendId
+            }
+            builder.build()
         }
     }
 

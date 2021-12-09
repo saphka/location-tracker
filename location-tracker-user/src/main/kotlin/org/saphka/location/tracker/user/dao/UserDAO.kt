@@ -4,7 +4,9 @@ import io.grpc.Status
 import org.jooq.DSLContext
 import org.jooq.Record
 import org.saphka.location.tracker.user.dao.jooq.Keys.C_USER_ALIAS_UNIQUE
+import org.saphka.location.tracker.user.dao.jooq.Tables.FRIEND
 import org.saphka.location.tracker.user.dao.jooq.Tables.USER_TABLE
+import org.saphka.location.tracker.user.model.FriendStatus
 import org.saphka.location.tracker.user.model.User
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
@@ -12,10 +14,10 @@ import reactor.core.publisher.Mono
 
 interface UserDAO {
     fun findUser(id: Int): Mono<User>
-    fun findUsers(ids: List<Int>): Flux<User>
     fun findUser(alias: String): Mono<User>
     fun createUser(alias: String, publicKey: ByteArray, passwordHash: String): Mono<User>
     fun updateUser(user: User): Mono<User>
+    fun findUsersFriends(id: Int): Flux<User>
 }
 
 @Service
@@ -39,12 +41,6 @@ class UserDAOImpl(private val create: DSLContext) : UserDAO {
             })
     }
 
-    override fun findUsers(ids: List<Int>): Flux<User> {
-        return Flux.from(
-            create.select().from(USER_TABLE).where(USER_TABLE.ID.`in`(ids))
-        ).map { mapUserRecord(it) }
-    }
-
     override fun createUser(alias: String, publicKey: ByteArray, passwordHash: String): Mono<User> {
         return Mono.from(
             create.insertInto(USER_TABLE)
@@ -64,6 +60,21 @@ class UserDAOImpl(private val create: DSLContext) : UserDAO {
             create.update(USER_TABLE)
                 .set(USER_TABLE.PUBLIC_KEY, user.publicKey)
                 .returning()
+        ).map { mapUserRecord(it) }
+    }
+
+    override fun findUsersFriends(id: Int): Flux<User> {
+        return Flux.from(
+            create.select().from(USER_TABLE).where(
+                USER_TABLE.ID.`in`(
+                    create.select(FRIEND.SECOND_ID).from(FRIEND)
+                        .where(FRIEND.FIRST_ID.eq(id).and(FRIEND.STATUS.eq(FriendStatus.CONFIRMED.name)))
+                        .unionAll(
+                            create.select(FRIEND.FIRST_ID).from(FRIEND)
+                                .where(FRIEND.SECOND_ID.eq(id).and(FRIEND.STATUS.eq(FriendStatus.CONFIRMED.name)))
+                        )
+                )
+            )
         ).map { mapUserRecord(it) }
     }
 

@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "org.saphka.location.tracker.location.grpc";
+option java_outer_classname = "LocationProto";
+
+package location;
+
+service LocationService {
+  rpc addLocation(LocationMultiRequest) returns (DummyMessage);
+  rpc getCurrentUserFriendsLocations(DummyMessage) returns (LocationMultiResponse);
+}
+
+message DummyMessage{
+
+}
+
+message LocationRequest {
+  int32 targetFriendId = 1;
+  uint64 timestamp = 2;
+  bytes latitude = 3;
+  bytes longitude = 4;
+}
+
+message LocationMultiRequest {
+  repeated LocationRequest location = 1;
+}
+
+message LocationResponse {
+  int32 targetFriendId = 1;
+  uint64 timestamp = 2;
+  bytes latitude = 3;
+  bytes longitude = 4;
+}
+
+message LocationMultiResponse {
+  repeated LocationResponse location = 1;
+}

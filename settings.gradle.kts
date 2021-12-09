@@ -5,3 +5,4 @@
 rootProject.name = "location-tracker"
 include(":location-tracker-commons")
 include(":location-tracker-user")
+include(":location-tracker-location")

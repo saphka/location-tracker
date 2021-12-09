@@ -1,0 +1,4 @@
+databaseChangeLog:
+  - include:
+      file: 20211209-01-location.yml
+      relativeToChangelogFile: true

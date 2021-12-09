@@ -1,0 +1,46 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20211209-01-location
+      author: saphka
+      changes:
+        - createTable:
+            tableName: location
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: friend_id
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: timestamp
+                  type: timestamp without timezone
+                  constraints:
+                    nullable: false
+              - column:
+                  name: latitude
+                  type: bytea
+                  constraints:
+                    nullable: false
+              - column:
+                  name: longitude
+                  type: bytea
+                  constraints:
+                    nullable: false
+        - createIndex:
+            tableName: location
+            indexName: location_user_id_index
+            columns:
+              - column:
+                  name: user_id

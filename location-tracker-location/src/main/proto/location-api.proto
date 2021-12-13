@@ -8,11 +8,16 @@ package location;
 
 service LocationService {
   rpc addLocation(LocationMultiRequest) returns (DummyMessage);
-  rpc getCurrentUserFriendsLocations(DummyMessage) returns (LocationMultiResponse);
+  rpc getCurrentUserFriendsLocations(PageRequest) returns (LocationMultiResponse);
 }
 
 message DummyMessage{
 
+}
+
+message PageRequest{
+  optional int32 page = 1;
+  optional int32 size = 2;
 }
 
 message LocationRequest {

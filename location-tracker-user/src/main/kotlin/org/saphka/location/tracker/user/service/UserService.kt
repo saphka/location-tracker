@@ -173,17 +173,15 @@ class UserServiceGrpcImpl(private val userService: UserService) :
         }
     }
 
-    private fun mapToUserResponse(user: User) = UserResponse.newBuilder().let {
-        it.id = user.id
-        it.alias = user.alias
-        it.publicKey = ByteString.copyFrom(user.publicKey)
-        it.build()
-    }
+    private fun mapToUserResponse(user: User) = UserResponse.newBuilder().apply {
+        id = user.id
+        alias = user.alias
+        publicKey = ByteString.copyFrom(user.publicKey)
+    }.build()
 
-    private fun mapToUserMultiResponse(users: List<User>) = UserMultipleResponse.newBuilder().let { builder ->
+    private fun mapToUserMultiResponse(users: List<User>) = UserMultipleResponse.newBuilder().apply {
         users.forEach {
-            builder.addUser(mapToUserResponse(it))
+            this.addUser(mapToUserResponse(it))
         }
-        builder.build()
-    }
+    }.build()
 }

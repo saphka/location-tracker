@@ -21,13 +21,18 @@ import javax.sql.DataSource
 class DaoConfiguration {
 
     @Bean
-    fun dslContext(connectionFactory: ConnectionFactory): DSLContext {
-        val jooqSettings = Settings()
-        jooqSettings.renderNameCase = RenderNameCase.LOWER_IF_UNQUOTED
-        jooqSettings.renderQuotedNames = RenderQuotedNames.EXPLICIT_DEFAULT_UNQUOTED
-
-        return DSL.using(connectionFactory, SQLDialect.POSTGRES, jooqSettings)
+    fun dslContext(connectionFactory: ConnectionFactory, sqlDialect: SQLDialect, jooqSettings: Settings): DSLContext {
+        return DSL.using(connectionFactory, sqlDialect, jooqSettings)
     }
+
+    @Bean
+    fun jooqSettings() = Settings().apply {
+        renderNameCase = RenderNameCase.LOWER_IF_UNQUOTED
+        renderQuotedNames = RenderQuotedNames.EXPLICIT_DEFAULT_UNQUOTED
+    }
+
+    @Bean
+    fun sqlDialect() = SQLDialect.POSTGRES
 
     @Bean
     fun dataSource(dataSourceProperties: DataSourceProperties): DataSource {

@@ -115,12 +115,11 @@ class FriendGrpcService(
     }
 
     private fun mapToPendingResponse(list: List<Friend>): FriendConfirmationMultipleResponse {
-        return FriendConfirmationMultipleResponse.newBuilder().let { builder ->
+        return FriendConfirmationMultipleResponse.newBuilder().apply {
             list.forEach { friend ->
-                builder.addConfirmationBuilder().friendId = friend.friendId
+                this.addConfirmationBuilder().friendId = friend.friendId
             }
-            builder.build()
-        }
+        }.build()
     }
 
 }

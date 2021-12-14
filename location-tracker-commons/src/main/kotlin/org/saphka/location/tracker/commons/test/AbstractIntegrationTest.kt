@@ -4,14 +4,12 @@ import org.junit.jupiter.api.TestInstance
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.ApplicationContextInitializer
 import org.springframework.context.ConfigurableApplicationContext
-import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.support.TestPropertySourceUtils
 import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.utility.DockerImageName
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ActiveProfiles("dev")
 @ContextConfiguration(initializers = [AbstractIntegrationTestInitializer::class])
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class AbstractIntegrationTest {
@@ -35,7 +33,9 @@ class AbstractIntegrationTestInitializer : ApplicationContextInitializer<Configu
             "spring.datasource.url=${database.jdbcUrl}",
             "spring.datasource.username=${database.username}",
             "spring.datasource.password=${database.password}",
-            "grpc.port=0"
+            "grpc.port=0",
+            "jwt.keystore=classpath:keystore/token-dev.jks",
+            "jwt.keystore-password=verysecret"
         )
     }
 

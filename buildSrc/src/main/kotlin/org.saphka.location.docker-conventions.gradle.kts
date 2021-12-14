@@ -9,19 +9,28 @@ plugins {
     id("com.palantir.docker")
 }
 
+val dockerRepository = "europe-west4-docker.pkg.dev/seventh-chassis-335118/location-tracker"
+
 afterEvaluate {
     val bootJarTask = tasks.getByName("bootJar")
     val jarPath: String = (bootJarTask.property("archiveFileName") as DefaultProperty<*>).get() as String
 
-
     docker {
-        name = "${project.name}:${project.version}"
-        files(
-            rootProject.file("docker/Dockerfile"),
-            bootJarTask.property("outputs")
+        name = "${dockerRepository}/${project.name}:${project.version}"
+        file("${project.buildDir}/Dockerfile").writeText(
+            """
+            FROM openjdk:17-alpine
+
+            CMD  [ "-XX:+AlwaysActAsServerClassMachine", "-XX:MaxRAMPercentage=70" ]
+
+            COPY $jarPath /app/application.jar
+
+            ENTRYPOINT [ "java", "-jar", "/app/application.jar"]                
+            """.trimIndent()
         )
-        buildArgs(
-            mapOf("JAR_FILE" to jarPath)
+        files(
+            "${project.buildDir}/Dockerfile",
+            bootJarTask.property("outputs")
         )
     }
 }

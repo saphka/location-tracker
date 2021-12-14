@@ -12,6 +12,7 @@ dependencies{
     implementation(project(":location-tracker-commons"))
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${versions["kotlin"]}")
     implementation("org.jetbrains.kotlin:kotlin-reflect:${versions["kotlin"]}")
+    implementation("org.springframework.boot:spring-boot-starter-jdbc:${versions["spring-boot"]}")
     implementation("org.springframework.security:spring-security-config:${versions["spring-security"]}")
     implementation("org.springframework.security:spring-security-oauth2-resource-server:${versions["spring-security"]}")
     implementation("org.springframework.security:spring-security-oauth2-jose:${versions["spring-security"]}")

@@ -4,9 +4,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 
 @SpringBootApplication
-class LocationTrackerUserApplication
+class LocationTrackerLocationApplication
 
 fun main(args: Array<String>) {
-    runApplication<LocationTrackerUserApplication>(*args)
+    runApplication<LocationTrackerLocationApplication>(*args)
 }
 

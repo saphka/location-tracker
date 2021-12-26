@@ -14,7 +14,11 @@ import org.lognet.springboot.grpc.autoconfigure.GRpcServerProperties
 import org.lognet.springboot.grpc.security.AuthClientInterceptor
 import org.lognet.springboot.grpc.security.AuthHeader
 import org.saphka.location.tracker.commons.test.AbstractIntegrationTest
-import org.saphka.location.tracker.user.grpc.*
+import org.saphka.location.tracker.user.grpc.DummyMessage
+import org.saphka.location.tracker.user.grpc.UserAuthRequest
+import org.saphka.location.tracker.user.grpc.UserChangeRequest
+import org.saphka.location.tracker.user.grpc.UserCreateRequest
+import org.saphka.location.tracker.user.grpc.UserServiceGrpc
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.jdbc.Sql
 import java.nio.ByteBuffer

@@ -17,8 +17,12 @@ afterEvaluate {
 
     docker {
         name = "${dockerRepository}/${project.name}:${project.version}"
-        file("${project.buildDir}/Dockerfile").writeText(
-            """
+        dependencies {
+            file("${project.buildDir}/docker").mkdirs()
+            file("${project.buildDir}/docker/Dockerfile").apply {
+
+                writeText(
+                    """
             FROM openjdk:17-alpine
 
             CMD  [ "-XX:+AlwaysActAsServerClassMachine", "-XX:MaxRAMPercentage=70" ]
@@ -27,9 +31,11 @@ afterEvaluate {
 
             ENTRYPOINT [ "java", "-jar", "/app/application.jar"]                
             """.trimIndent()
-        )
+                )
+            }
+        }
         files(
-            "${project.buildDir}/Dockerfile",
+            "${project.buildDir}/docker/Dockerfile",
             bootJarTask.property("outputs")
         )
     }

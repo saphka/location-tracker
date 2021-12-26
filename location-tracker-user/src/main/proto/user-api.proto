@@ -11,12 +11,12 @@ service UserService {
   rpc authUser(UserAuthRequest) returns (TokenResponse);
   rpc getCurrentUserInfo(DummyMessage) returns (UserResponse);
   rpc changeCurrentUser(UserChangeRequest) returns (UserResponse);
-  rpc getCurrentUserFriends(DummyMessage) returns (UserMultipleResponse);
+  rpc getCurrentUserFriends(DummyMessage) returns (stream UserResponse);
 }
 
 service FriendService {
   rpc addFriend(FriendRequest) returns (DummyMessage);
-  rpc getPendingFriendRequests(DummyMessage) returns (FriendConfirmationMultipleResponse);
+  rpc getPendingFriendRequests(DummyMessage) returns (stream FriendConfirmation);
   rpc confirmFriend(FriendConfirmation) returns (DummyMessage);
 }
 
@@ -28,10 +28,6 @@ message UserResponse {
   int32 id = 1;
   string alias = 2;
   bytes publicKey = 3;
-}
-
-message UserMultipleResponse {
-  repeated UserResponse user = 1;
 }
 
 message UserCreateRequest {
@@ -59,8 +55,4 @@ message FriendRequest {
 
 message FriendConfirmation {
   int32 friendId = 1;
-}
-
-message FriendConfirmationMultipleResponse {
-  repeated FriendConfirmation confirmation = 1;
 }

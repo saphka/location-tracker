@@ -8,7 +8,7 @@ package location;
 
 service LocationService {
   rpc addLocation(LocationMultiRequest) returns (DummyMessage);
-  rpc getCurrentUserFriendsLocations(PageRequest) returns (LocationMultiResponse);
+  rpc getCurrentUserFriendsLocations(PageRequest) returns (stream LocationMessage);
 }
 
 message DummyMessage{
@@ -20,7 +20,7 @@ message PageRequest{
   optional int32 size = 2;
 }
 
-message LocationRequest {
+message LocationMessage {
   int32 targetFriendId = 1;
   uint64 timestamp = 2;
   bytes latitude = 3;
@@ -28,16 +28,5 @@ message LocationRequest {
 }
 
 message LocationMultiRequest {
-  repeated LocationRequest location = 1;
-}
-
-message LocationResponse {
-  int32 targetFriendId = 1;
-  uint64 timestamp = 2;
-  bytes latitude = 3;
-  bytes longitude = 4;
-}
-
-message LocationMultiResponse {
-  repeated LocationResponse location = 1;
+  repeated LocationMessage location = 1;
 }

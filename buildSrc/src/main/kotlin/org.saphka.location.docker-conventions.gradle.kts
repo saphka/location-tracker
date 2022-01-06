@@ -9,33 +9,37 @@ plugins {
     id("com.palantir.docker")
 }
 
-val dockerRepository = "europe-west4-docker.pkg.dev/seventh-chassis-335118/location-tracker"
+val dockerRepository = "saphka"
+val dockerImage = "${project.name}:${project.version}"
+
+docker {
+    name = dockerImage
+    tag("DockerHub", "$dockerRepository/$name")
+}
 
 afterEvaluate {
     val bootJarTask = tasks.getByName("bootJar")
     val jarPath: String = (bootJarTask.property("archiveFileName") as DefaultProperty<*>).get() as String
 
     docker {
-        name = "${dockerRepository}/${project.name}:${project.version}"
         dependencies {
-            file("${project.buildDir}/docker").mkdirs()
-            file("${project.buildDir}/docker/Dockerfile").apply {
-
+            file("${project.buildDir}/docker-data").mkdirs()
+            file("${project.buildDir}/docker-data/Dockerfile").apply {
                 writeText(
                     """
-            FROM openjdk:17-alpine
-
-            CMD  [ "-XX:+AlwaysActAsServerClassMachine", "-XX:MaxRAMPercentage=70" ]
-
-            COPY $jarPath /app/application.jar
-
-            ENTRYPOINT [ "java", "-jar", "/app/application.jar"]                
-            """.trimIndent()
+                    FROM openjdk:17-alpine
+        
+                    CMD  [ "-XX:+AlwaysActAsServerClassMachine", "-XX:MaxRAMPercentage=70" ]
+        
+                    COPY $jarPath /app/application.jar
+        
+                    ENTRYPOINT [ "java", "-jar", "/app/application.jar"]                
+                    """.trimIndent()
                 )
             }
         }
         files(
-            "${project.buildDir}/docker/Dockerfile",
+            "${project.buildDir}/docker-data/Dockerfile",
             bootJarTask.property("outputs")
         )
     }

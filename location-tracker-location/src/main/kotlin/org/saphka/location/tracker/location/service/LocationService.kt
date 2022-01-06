@@ -63,13 +63,13 @@ class LocationServiceGrpcImpl(private val locationService: LocationService) :
         request: LocationMultiRequest,
         responseObserver: StreamObserver<DummyMessage>
     ) {
-        return GrpcCoroutineWrapper.wrap(
+        GrpcCoroutineWrapper.wrap(
             request,
             responseObserver
         ) { req ->
             req
                 .flatMapConcat { addRequest ->
-                    val context = GrpcCoroutineWrapper.contextHolder.get()
+                    val context = GrpcCoroutineWrapper.getContext()
                     val authentication = GrpcSecurity.AUTHENTICATION_CONTEXT_KEY.get(context)
                     val sub =
                         (authentication as JwtAuthenticationToken).token.subject.toInt()
@@ -84,13 +84,13 @@ class LocationServiceGrpcImpl(private val locationService: LocationService) :
         request: PageRequest,
         responseObserver: StreamObserver<LocationMessage>
     ) {
-        return GrpcCoroutineWrapper.wrap(
+        GrpcCoroutineWrapper.wrap(
             request,
             responseObserver
         ) { req ->
             req
                 .flatMapConcat { getRequest ->
-                    val context = GrpcCoroutineWrapper.contextHolder.get()
+                    val context = GrpcCoroutineWrapper.getContext()
                     val authentication = GrpcSecurity.AUTHENTICATION_CONTEXT_KEY.get(context)
                     val sub =
                         (authentication as JwtAuthenticationToken).token.subject.toInt()

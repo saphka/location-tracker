@@ -91,13 +91,13 @@ class UserServiceGrpcImpl(private val userService: UserService) :
 
     @Secured
     override fun getCurrentUserInfo(request: DummyMessage, responseObserver: StreamObserver<UserResponse>) {
-        return GrpcCoroutineWrapper.wrap(
+        GrpcCoroutineWrapper.wrap(
             request,
             responseObserver
         ) { req ->
             req
                 .flatMapConcat {
-                    val context = GrpcCoroutineWrapper.contextHolder.get()
+                    val context = GrpcCoroutineWrapper.getContext()
                     val authentication = GrpcSecurity.AUTHENTICATION_CONTEXT_KEY.get(context)
                     val sub =
                         (authentication as JwtAuthenticationToken).token.subject.toInt()
@@ -111,13 +111,13 @@ class UserServiceGrpcImpl(private val userService: UserService) :
 
     @Secured
     override fun changeCurrentUser(request: UserChangeRequest, responseObserver: StreamObserver<UserResponse>) {
-        return GrpcCoroutineWrapper.wrap(
+        GrpcCoroutineWrapper.wrap(
             request,
             responseObserver
         ) { req ->
             req
                 .flatMapConcat { userChangeData ->
-                    val context = GrpcCoroutineWrapper.contextHolder.get()
+                    val context = GrpcCoroutineWrapper.getContext()
                     val authentication = GrpcSecurity.AUTHENTICATION_CONTEXT_KEY.get(context)
                     val sub =
                         (authentication as JwtAuthenticationToken).token.subject.toInt()
@@ -143,7 +143,7 @@ class UserServiceGrpcImpl(private val userService: UserService) :
     }
 
     override fun register(request: UserCreateRequest, responseObserver: StreamObserver<UserResponse>) {
-        return GrpcCoroutineWrapper.wrap(
+        GrpcCoroutineWrapper.wrap(
             request,
             responseObserver
         ) { req ->
@@ -158,13 +158,13 @@ class UserServiceGrpcImpl(private val userService: UserService) :
         request: DummyMessage,
         responseObserver: StreamObserver<UserResponse>
     ) {
-        return GrpcCoroutineWrapper.wrap(
+        GrpcCoroutineWrapper.wrap(
             request,
             responseObserver
         ) { req ->
             req
                 .flatMapConcat {
-                    val context = GrpcCoroutineWrapper.contextHolder.get()
+                    val context = GrpcCoroutineWrapper.getContext()
                     val authentication = GrpcSecurity.AUTHENTICATION_CONTEXT_KEY.get(context)
                     val sub =
                         (authentication as JwtAuthenticationToken).token.subject.toInt()

@@ -26,7 +26,7 @@ class GrpcCoroutineWrapperTest {
                 observer
             ) {
                 it.map { "not so dummy" }
-            }
+            }.join()
         }
 
         verify(observer, times(0)).onError(any())
@@ -44,7 +44,7 @@ class GrpcCoroutineWrapperTest {
                 observer
             ) {
                 it.map { throw Status.INVALID_ARGUMENT.asRuntimeException() }
-            }
+            }.join()
         }
 
         verify(observer, times(0)).onCompleted()
@@ -62,7 +62,7 @@ class GrpcCoroutineWrapperTest {
                 observer
             ) {
                 throw Status.ABORTED.asRuntimeException()
-            }
+            }.join()
         }
 
         verify(observer, times(0)).onCompleted()
@@ -80,7 +80,7 @@ class GrpcCoroutineWrapperTest {
                 observer
             ) {
                 it.flatMapConcat { emptyFlow() }
-            }
+            }.join()
         }
 
         verify(observer, times(0)).onNext(any())

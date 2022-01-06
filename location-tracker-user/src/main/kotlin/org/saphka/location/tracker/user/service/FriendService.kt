@@ -53,13 +53,13 @@ class FriendGrpcService(
         request: DummyMessage,
         responseObserver: StreamObserver<FriendConfirmation>
     ) {
-        return GrpcCoroutineWrapper.wrap(
+        GrpcCoroutineWrapper.wrap(
             request,
             responseObserver
         ) { req ->
             req
                 .flatMapConcat {
-                    val context = GrpcCoroutineWrapper.contextHolder.get()
+                    val context = GrpcCoroutineWrapper.getContext()
                     val authentication = GrpcSecurity.AUTHENTICATION_CONTEXT_KEY.get(context)
                     val sub =
                         (authentication as JwtAuthenticationToken).token.subject.toInt()
@@ -81,12 +81,12 @@ class FriendGrpcService(
         request: FriendConfirmation,
         responseObserver: StreamObserver<DummyMessage>
     ) {
-        return GrpcCoroutineWrapper.wrap(
+        GrpcCoroutineWrapper.wrap(
             request,
             responseObserver
         ) { req ->
             req.flatMapConcat { confirmation ->
-                val context = GrpcCoroutineWrapper.contextHolder.get()
+                val context = GrpcCoroutineWrapper.getContext()
                 val authentication = GrpcSecurity.AUTHENTICATION_CONTEXT_KEY.get(context)
                 val sub =
                     (authentication as JwtAuthenticationToken).token.subject.toInt()
@@ -101,14 +101,14 @@ class FriendGrpcService(
         request: FriendRequest,
         responseObserver: StreamObserver<DummyMessage>
     ) {
-        return GrpcCoroutineWrapper.wrap(
+         GrpcCoroutineWrapper.wrap(
             request,
             responseObserver
         ) { req ->
             req.flatMapConcat {
                 userService.getUserByAlias(it.alias)
             }.flatMapConcat {
-                val context = GrpcCoroutineWrapper.contextHolder.get()
+                val context = GrpcCoroutineWrapper.getContext()
                 val authentication = GrpcSecurity.AUTHENTICATION_CONTEXT_KEY.get(context)
                 val sub =
                     (authentication as JwtAuthenticationToken).token.subject.toInt()

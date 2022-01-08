@@ -10,7 +10,7 @@ services:
     pull_policy: always
 
   user-service:
-    image: saphka/location-tracker-user:1.0.0-SNAPSHOT
+    image: saphka/location-tracker-user:{{org.saphka.location:location-tracker-user}}
     environment:
       SPRING_PROFILES_INCLUDE: "dev"
       SPRING_DATASOURCE_URL: "jdbc:postgresql://host.docker.internal:5432/postgres"

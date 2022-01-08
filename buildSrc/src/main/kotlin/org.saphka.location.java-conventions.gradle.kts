@@ -17,7 +17,7 @@ repositories {
 }
 
 group = "org.saphka.location"
-version = "1.0.0-SNAPSHOT"
+version = findProperty("application.version")!!
 java.sourceCompatibility = JavaVersion.VERSION_16
 java.targetCompatibility = JavaVersion.VERSION_16
 

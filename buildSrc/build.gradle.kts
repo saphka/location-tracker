@@ -17,5 +17,4 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-allopen:1.5.32")
     implementation("nu.studer:gradle-jooq-plugin:6.0.1")
     implementation("gradle.plugin.com.google.protobuf:protobuf-gradle-plugin:0.8.18")
-    implementation("com.palantir.gradle.docker:gradle-docker:0.31.0")
 }

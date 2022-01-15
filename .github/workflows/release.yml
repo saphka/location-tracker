@@ -13,8 +13,4 @@ jobs:
           java-version: 17
           distribution: zulu
       - uses: gradle/gradle-build-action@v2
-      - uses: docker/login-action@v1
-        with:
-          username: ${{ secrets.DOCKER_USER_NAME }}
-          password: ${{ secrets.DOCKER_AUTH_TOKEN }}
-      - run: ./gradlew docker dockerPushDockerHub -Papplication.version=${GITHUB_REF##*/}
+      - run: ./gradlew build -Papplication.version=${GITHUB_REF##*/}

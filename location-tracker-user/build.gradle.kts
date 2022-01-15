@@ -2,7 +2,6 @@ plugins {
     id("org.saphka.location.java-conventions")
     id("org.saphka.location.jooq-conventions")
     id("org.saphka.location.protobuf-conventions")
-    id("org.saphka.location.docker-conventions")
     id("org.springframework.boot").version("2.5.6")
 }
 

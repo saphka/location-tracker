@@ -1,0 +1,7 @@
+---
+# tasks file for roles/software
+- name: install openjdk
+  become: yes
+  apt:
+    name: openjdk-17-jdk
+    update_cache: yes

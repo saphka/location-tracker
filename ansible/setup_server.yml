@@ -1,10 +1,5 @@
 ---
-- name: "Prepare Server"
-  hosts: all
-  become: yes
-  become_user: root
-  tasks:
-    - name: Install openjdk
-      apt:
-        name: openjdk-17-jdk
-        update_cache: yes
+- name: "Setup Application Server"
+  hosts: service
+  roles:
+    - roles/service

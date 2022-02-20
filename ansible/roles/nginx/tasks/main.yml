@@ -5,6 +5,7 @@
   apt:
     name: nginx
     update_cache: yes
+  tags: [ never, setup ]
 - name: copy config
   become: yes
   copy:

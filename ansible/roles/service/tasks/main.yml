@@ -5,3 +5,40 @@
   apt:
     name: openjdk-17-jdk
     update_cache: yes
+  tags: [ never, setup ]
+- name: create service user
+  become: yes
+  user:
+    name: location
+    group: location
+  tags: [ never, setup ]
+- name: copy service files
+  become: yes
+  copy:
+    src: systemd/
+    dest: /etc/systemd/system/
+  tags: [ never, setup ]
+- name: copy user jar files
+  become: yes
+  copy:
+    src: {{ playbook_dir }}../location-tracker-user/build/libs/app.jar
+    dest: /opt/location-tracker/user/
+  notify: restart user
+- name: copy location jar files
+  become: yes
+  copy:
+    src: {{ playbook_dir }}../location-tracker-location/build/libs/app.jar
+    dest: /opt/location-tracker/location/
+  notify: restart user
+- name: enable and start user service
+  become: yes
+  service:
+    name: location-tacker-user
+    enabled: yes
+    state: started
+- name: enable and start location service
+  become: yes
+  service:
+    name: location-tacker-location
+    enabled: yes
+    state: started

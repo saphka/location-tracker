@@ -29,4 +29,6 @@ locationJooq {
     packageName.set("org.saphka.location.tracker.user.dao.jooq")
 }
 
+tasks.bootJar.get().archiveFileName.set("app.jar")
+
 description = "location-tracker-user"

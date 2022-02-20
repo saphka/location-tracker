@@ -1,2 +1,14 @@
 ---
 # handlers file for roles/software
+- name: restart user service
+  become: yes
+  service:
+    name: location-tacker-user
+    state: restarted
+  listen: restart user
+- name: restart location service
+  become: yes
+  service:
+    name: location-tacker-location
+    state: restarted
+  listen: restart location

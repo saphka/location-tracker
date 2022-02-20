@@ -1,0 +1,13 @@
+[Unit]
+Description=Location Tacker User Service
+After=network.target
+
+[Service]
+WorkingDirectory=/opt/location-tracker/user
+ExecStart=java -jar /opt/location-tracker/user/app.jar
+Restart=on-failure
+User=location
+Group=location
+
+[Install]
+WantedBy=multi-user.target

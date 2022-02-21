@@ -3,12 +3,16 @@
 - name: restart user service
   become: yes
   service:
-    name: location-tacker-user
+    name: location-tracker-user
     state: restarted
   listen: restart user
 - name: restart location service
   become: yes
   service:
-    name: location-tacker-location
+    name: location-tracker-location
     state: restarted
   listen: restart location
+- name: restart systemd deamon
+  become: yes
+  shell: systemctl daemon-reload
+  listen: restart systemd

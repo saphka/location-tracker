@@ -1,10 +1,11 @@
 [Unit]
-Description=Location Tacker User Service
+Description=Location Tracker User Service
 After=network.target
 
 [Service]
+Type=simple
 WorkingDirectory=/opt/location-tracker/user
-ExecStart=java -jar /opt/location-tracker/user/app.jar
+ExecStart=java -jar /opt/location-tracker/user/location-tracker-user.jar
 Restart=on-failure
 User=location
 Group=location

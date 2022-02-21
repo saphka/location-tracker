@@ -3,9 +3,13 @@
 - name: add postgres repo
   become: yes
   apt_repository:
-    repo: "http://apt.postgresql.org/pub/repos/apt focal-pgdg main"
+    repo: deb http://apt.postgresql.org/pub/repos/apt focal-pgdg main
+    update_cache: false
+  tags: [ never, setup ]
+- name: add postgres repo key
+  become: yes
   apt_key:
-    url: "https://www.postgresql.org/media/keys/ACCC4CF8.asc"
+    url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
   tags: [ never, setup ]
 - name: install postgres
   become: yes

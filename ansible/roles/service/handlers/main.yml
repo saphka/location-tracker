@@ -1,18 +1,18 @@
 ---
 # handlers file for roles/software
 - name: restart user service
-  become: yes
+  become: true
   service:
     name: location-tracker-user
     state: restarted
   listen: restart user
 - name: restart location service
-  become: yes
+  become: true
   service:
     name: location-tracker-location
     state: restarted
   listen: restart location
 - name: restart systemd deamon
-  become: yes
+  become: true
   shell: systemctl daemon-reload
   listen: restart systemd

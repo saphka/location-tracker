@@ -2,7 +2,7 @@
 # handlers file for roles/nginx
 # handlers file for nginx_role
 - name: restart nginx service
-  become: yes
+  become: true
   service:
     name: nginx
     state: restarted

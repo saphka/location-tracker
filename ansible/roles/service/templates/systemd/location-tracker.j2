@@ -1,0 +1,9 @@
+JWT_KEYSTORE_PASSWORD={{ token_jks_pwd }}
+GRPC_PORT={{ grpc_port }}
+
+SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/lt_{{ service_name }}
+SPRING_DATASOURCE_USERNAME={{ db_user }}
+SPRING_DATASOURCE_PASSWORD={{ db_password }}
+SPRING_R2DBC_URL=r2dbc:postgresql://localhost:5432/lt_{{ service_name }}
+SPRING_R2DBC_USERNAME={{ db_user }}
+SPRING_R2DBC_PASSWORD={{ db_password }}

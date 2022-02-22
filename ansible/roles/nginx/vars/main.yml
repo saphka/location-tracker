@@ -1,2 +1,4 @@
 ---
 # vars file for roles/nginx
+user_service_grpc_port: 6565
+location_service_grpc_port: 6575

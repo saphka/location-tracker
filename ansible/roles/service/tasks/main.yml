@@ -1,52 +1,71 @@
 ---
 # tasks file for roles/software
+- include_vars: secrets.yml
+  tags: always
 - name: install openjdk
-  become: yes
+  become: true
   apt:
     name: openjdk-17-jdk
     update_cache: yes
   tags: [ never, setup ]
 - name: create service group
-  become: yes
+  become: true
   group:
     name: location
   tags: [ never, setup ]
 - name: create service user
-  become: yes
+  become: true
   user:
     name: location
     group: location
   tags: [ never, setup ]
+- name: create directory
+  become: true
+  file:
+    path: /etc/sysconfig
+    state: directory
+- name: copy env file
+  become: true
+  template:
+    src: systemd/location-tracker.j2
+    dest: "/etc/sysconfig/location-tracker-{{ service_name }}"
+    mode: '600'
+    owner: root
+  vars:
+    service_name: "{{ item.service }}"
+    grpc_port: "{{ item.grpc_port }}"
+  with_items:
+    - service: user
+      grpc_port: 6565
+    - service: location
+      grpc_port: 6575
 - name: copy service files
-  become: yes
-  copy:
-    src: systemd/
-    dest: /etc/systemd/system/
-  tags: [ never, setup ]
+  become: true
+  template:
+    src: systemd/location-tracker.service.j2
+    dest: "/etc/systemd/system/location-tracker-{{ item }}.service"
+  vars:
+    service_name: "{{ item }}"
+  with_items:
+    - user
+    - location
   notify: restart systemd
-- name: copy user jar files
-  become: yes
+- name: copy jar files
+  become: true
   copy:
-    src: location-tracker-user.jar
-    dest: /opt/location-tracker/user/
+    src: "location-tracker-{{ item }}.jar"
+    dest: "/opt/location-tracker/{{ item }}/"
     owner: location
-  notify: restart user
-- name: copy location jar files
-  become: yes
-  copy:
-    src: location-tracker-location.jar
-    dest: /opt/location-tracker/location/
-    owner: location
-  notify: restart user
-- name: enable and start user service
-  become: yes
+  with_items:
+    - user
+    - location
+  notify: "restart {{ item }}"
+- name: enable and start services
+  become: true
   service:
-    name: location-tracker-user
+    name: "location-tracker-{{ item }}"
     enabled: yes
     state: started
-- name: enable and start location service
-  become: yes
-  service:
-    name: location-tracker-location
-    enabled: yes
-    state: started
+  with_items:
+    - user
+    - location

@@ -1,0 +1,15 @@
+[Unit]
+Description=Location tracker {{ service_name }}
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/location-tracker/{{ service_name }}
+EnvironmentFile=/etc/sysconfig/location-tracker-{{ service_name }}
+ExecStart=java -jar /opt/location-tracker/{{ service_name }}/location-tracker-{{ service_name }}.jar
+Restart=on-failure
+User=location
+Group=location
+
+[Install]
+WantedBy=multi-user.target
